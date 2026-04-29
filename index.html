@@ -22,7 +22,7 @@ button{font-family:inherit;cursor:pointer;}
 .topnav-trophy{background:none;border:none;color:rgba(255,212,71,0.8);font-size:15px;padding:4px 0 4px 8px;letter-spacing:.3px;width:48px;text-align:right;}
 
 /* ── Scroll area ── */
-.scroll-area{flex:1;overflow-y:auto;padding:20px 14px 40px;display:flex;justify-content:center;align-items:flex-start;}
+.scroll-area{flex:1;overflow-y:auto;padding:12px 14px 16px;display:flex;justify-content:center;align-items:flex-start;}
 
 /* ── Container ── */
 .container{width:100%;max-width:480px;}
@@ -39,7 +39,7 @@ button{width:auto;padding:0;border:none;border-radius:0;font-size:inherit;font-w
   border-radius:20px;
   border:3px solid #8B6914;
   box-shadow:0 8px 32px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,212,71,0.08);
-  padding:28px 20px 36px;
+  padding:20px 20px 20px;
   position:relative;
   overflow:hidden;
 }
@@ -59,7 +59,7 @@ button{width:auto;padding:0;border:none;border-radius:0;font-size:inherit;font-w
   font-size:20px;
   letter-spacing:2px;
   text-transform:uppercase;
-  margin-bottom:6px;
+  margin-bottom:4px;
   font-family:'Georgia','Times New Roman',serif;
 }
 .setup-card-sub{
@@ -68,20 +68,20 @@ button{width:auto;padding:0;border:none;border-radius:0;font-size:inherit;font-w
   letter-spacing:2px;
   text-transform:uppercase;
   color:rgba(255,212,71,0.4);
-  margin-bottom:24px;
+  margin-bottom:14px;
   border-bottom:1px solid rgba(255,212,71,0.15);
-  padding-bottom:16px;
+  padding-bottom:10px;
 }
 .setup-section-label{
   font-size:9px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;
   color:rgba(255,212,71,0.4);
-  margin:16px 0 8px;
+  margin:10px 0 6px;
   border-left:2px solid rgba(255,212,71,0.3);
   padding-left:8px;
 }
-.setup-player-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.setup-player-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
 .name-input{
-  flex:1;padding:10px 12px;
+  flex:1;padding:8px 12px;
   box-sizing:border-box;
   border-radius:4px;
   border:1px solid rgba(255,212,71,0.2);
@@ -106,7 +106,7 @@ button{width:auto;padding:0;border:none;border-radius:0;font-size:inherit;font-w
 .course-input::placeholder{color:rgba(255,255,255,0.25);}
 .course-input:focus{outline:none;border-color:rgba(255,212,71,0.7);background:rgba(0,0,0,0.55);}
 input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
-.row-setting{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.row-setting{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
 .row-setting label{font-size:11px;white-space:nowrap;color:rgba(255,212,71,0.55);text-transform:uppercase;letter-spacing:.8px;}
 .select-input{
   box-sizing:border-box;
@@ -118,12 +118,12 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
   font-family:'Courier New',monospace;
 }
 .start-btn{
-  width:100%;padding:14px;
+  width:100%;padding:12px;
   border:none;border-radius:6px;
   font-size:14px;font-weight:bold;
   background:linear-gradient(135deg,#8B6914,#ffd447,#8B6914);
   color:#0a0a00;cursor:pointer;
-  margin-top:8px;
+  margin-top:6px;
   box-shadow:0 2px 16px rgba(184,150,46,0.5);
   letter-spacing:2px;text-transform:uppercase;
   font-family:'Georgia','Times New Roman',serif;
@@ -608,7 +608,7 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
               <div class="setup-player-row"><input class="name-input" id="name3" placeholder="Player 4"></div>
             </div>
             <div class="setup-section-label">Settings</div>
-            <div class="row-setting" style="margin-top:12px;">
+            <div class="row-setting">
               <label>Starting Banker:</label>
               <select id="startBankerSelect" class="select-input">
                 <option value="0">Player 1</option>
@@ -632,7 +632,7 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
             </div>
             <button class="start-btn" onclick="startGame()">Deal In</button>
             <div id="nameError">Enter at least 2 player names.</div>
-            <div style="margin-top:14px;padding-bottom:44px;"></div>
+            <div style="padding-bottom:32px;"></div>
           </div>
 
           <div class="flip-back">

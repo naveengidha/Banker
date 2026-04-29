@@ -1,4 +1,4 @@
-const CACHE = 'banker-v7';
+const CACHE = 'banker-v9';
 const ASSETS = [
   './index.html',
   './trophy.html',
