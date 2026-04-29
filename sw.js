@@ -1,10 +1,12 @@
-const CACHE = 'banker-v3';
+const CACHE = 'banker-v4';
 const ASSETS = [
   './index.html',
   './trophy.html',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/apple-touch-icon-152.png'
 ];
 
 self.addEventListener('install', e => {
