@@ -14,10 +14,10 @@
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;margin:0;padding:0;color:#fff;display:flex;flex-direction:column;min-height:100vh;}
 .topnav{display:flex;align-items:center;padding:12px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);position:sticky;top:0;z-index:50;flex-shrink:0;}
 .back-btn{background:none;border:none;color:rgba(255,212,71,0.8);font-size:15px;font-weight:bold;cursor:pointer;padding:4px 8px 4px 0;text-decoration:none;}
-.topnav-title{font-size:15px;font-weight:bold;color:#ffd447;flex:1;text-align:center;letter-spacing:.5px;}
+.topnav-title{flex:1;text-align:center;font-size:15px;font-weight:bold;letter-spacing:2px;color:#ffd447;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
 .topnav-spacer{width:70px;}
 .tab-bar{display:flex;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);flex-shrink:0;}
-.tab{flex:1;padding:11px 8px;text-align:center;font-size:13px;font-weight:bold;cursor:pointer;color:rgba(255,255,255,0.4);border-bottom:3px solid transparent;transition:color .15s,border-color .15s;-webkit-user-select:none;letter-spacing:.5px;}
+.tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:bold;cursor:pointer;color:rgba(255,212,71,0.35);border-bottom:3px solid transparent;transition:color .15s,border-color .15s;-webkit-user-select:none;letter-spacing:2px;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
 .tab.active{color:#ffd447;border-bottom-color:#8B6914;}
 .scroll-area{flex:1;overflow-y:auto;padding:16px 14px 40px;}
 .round-card{background:#0e1a12;border:1px solid rgba(184,150,46,0.25);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
@@ -45,6 +45,13 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;margin:0;p
 table.sc-table{width:100%;border-collapse:collapse;font-size:12px;}
 table.sc-table th{background:rgba(0,0,0,0.5);color:rgba(255,212,71,0.7);border:1px solid rgba(255,212,71,0.1);padding:5px 4px;text-align:center;white-space:nowrap;font-size:10px;letter-spacing:.5px;text-transform:uppercase;}
 table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-align:center;font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
+.sc-banker-cell{background:rgba(255,212,71,0.08);color:#ffd447;font-weight:bold;}
+.sc-pos{color:#5ee87b;font-weight:bold;}
+.sc-neg{color:#ff7b7b;font-weight:bold;}
+.sc-result-col{font-size:11px;text-align:center;padding:4px 6px;}
+.sc-wager{display:block;font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.3px;margin-top:1px;font-family:Arial,sans-serif;font-weight:normal;}
+.sc-wager.doubled{color:rgba(255,212,71,0.7);}
+.sc-d{font-size:8px;font-weight:bold;background:rgba(255,212,71,0.2);color:#ffd447;border-radius:2px;padding:0 3px;margin-left:2px;font-family:Arial,sans-serif;vertical-align:middle;}
 .settle-row{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:13px;border:1px solid rgba(255,212,71,0.06);}
 .settle-from{color:#ff7b7b;font-weight:bold;}
 .settle-arrow{color:rgba(255,212,71,0.3);}
@@ -88,13 +95,13 @@ table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-al
 
 <div class="topnav">
   <a class="back-btn" href="index.html">‹ Game</a>
-  <div class="topnav-title">🏆 Trophy Room</div>
+  <div class="topnav-title">Trophy Room</div>
   <div class="topnav-spacer"></div>
 </div>
 
 <div class="tab-bar">
-  <div class="tab active" id="tabStandings" onclick="switchTab('standings')">🏅 Standings</div>
-  <div class="tab" id="tabRounds" onclick="switchTab('rounds')">📋 Rounds</div>
+  <div class="tab active" id="tabStandings" onclick="switchTab('standings')">Standings</div>
+  <div class="tab" id="tabRounds" onclick="switchTab('rounds')">Rounds</div>
 </div>
 
 <div class="scroll-area" id="scrollArea"></div>
@@ -217,18 +224,32 @@ function renderBankerCard(r){
 
   let scHead, scRows = '';
   if(r.holeHistory){
-    scHead = `<th>#</th>${r.players.map(n=>`<th>${esc(n)}</th>`).join('')}<th>Result</th>`;
+    scHead = `<th>#</th>${r.players.map(n=>`<th>${esc(n)}</th>`).join('')}<th>Banker</th><th>Result</th>`;
     r.holeHistory.forEach(h=>{
-      scRows += `<tr>
-        <td>${h.holeNum}</td>
-        ${h.scores.map((s,i)=>`<td${i===h.bankerIdx?' style="color:#ffd447;font-weight:bold"':''}>${s}</td>`).join('')}
-        <td style="font-size:11px;text-align:left">${h.allTied ? 'Carryover' :
-          h.matchups.filter(m=>m.result!=='tie').map(m=>
-            m.result==='banker'
-              ? `${esc(r.players[m.playerIdx])} -$${m.amount}`
-              : `${esc(r.players[m.playerIdx])} +$${m.amount}`
-          ).join(', ')}</td>
-      </tr>`;
+      const winners = new Set(h.matchups.filter(m=>m.result==='player').map(m=>m.playerIdx));
+      const matchupMap = {};
+      h.matchups.forEach(m=>{ matchupMap[m.playerIdx] = m; });
+      const bankerDidDouble = h.matchups.length > 0 && h.matchups[0].bankerDoubled;
+      let cells = '';
+      for(let i=0; i<r.players.length; i++){
+        if(i === h.bankerIdx){
+          const dBadge = bankerDidDouble ? `<span class="sc-d">D</span>` : '';
+          cells += `<td class="sc-banker-cell">${h.scores[i]}${dBadge}</td>`;
+        } else {
+          const m = matchupMap[i];
+          const anyDoubled = m && (m.doubled || m.bankerDoubled);
+          const dBadge = (m && m.doubled) ? `<span class="sc-d">D</span>` : '';
+          const wagerLine = m ? `<span class="sc-wager${anyDoubled?' doubled':''}">$${m.holeValue}</span>` : '';
+          const cls = winners.has(i) ? 'sc-pos' : '';
+          cells += `<td class="${cls}">${h.scores[i]}${dBadge}${wagerLine}</td>`;
+        }
+      }
+      const parts = h.allTied ? ['Carryover'] : h.matchups.filter(m=>m.result!=='tie').map(m=>
+        m.result==='banker'
+          ? `<span class="sc-neg">${esc(r.players[m.playerIdx])} −$${m.amount}</span>`
+          : `<span class="sc-pos">${esc(r.players[m.playerIdx])} +$${m.amount}</span>`
+      );
+      scRows += `<tr><td>${h.holeNum}</td>${cells}<td class="sc-banker-cell">${esc(r.players[h.bankerIdx])}</td><td class="sc-result-col">${parts.join('<br>')}</td></tr>`;
     });
   }
 
