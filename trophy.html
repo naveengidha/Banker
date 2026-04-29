@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080f0a">
+<title>Trophy Room — Banker</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;margin:0;padding:0;color:#fff;display:flex;flex-direction:column;min-height:100vh;}
+.topnav{display:flex;align-items:center;padding:12px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);position:sticky;top:0;z-index:50;flex-shrink:0;}
+.back-btn{background:none;border:none;color:rgba(255,212,71,0.8);font-size:15px;font-weight:bold;cursor:pointer;padding:4px 8px 4px 0;text-decoration:none;}
+.topnav-title{font-size:15px;font-weight:bold;color:#ffd447;flex:1;text-align:center;letter-spacing:.5px;}
+.topnav-spacer{width:70px;}
+.tab-bar{display:flex;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);flex-shrink:0;}
+.tab{flex:1;padding:11px 8px;text-align:center;font-size:13px;font-weight:bold;cursor:pointer;color:rgba(255,255,255,0.4);border-bottom:3px solid transparent;transition:color .15s,border-color .15s;-webkit-user-select:none;letter-spacing:.5px;}
+.tab.active{color:#ffd447;border-bottom-color:#8B6914;}
+.scroll-area{flex:1;overflow-y:auto;padding:16px 14px 40px;}
+.round-card{background:#0e1a12;border:1px solid rgba(184,150,46,0.25);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+.round-card-header{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 14px 12px;cursor:pointer;gap:10px;}
+.round-card-header:active{background:rgba(255,212,71,0.03);}
+.rch-left{flex:1;}
+.rch-date{font-size:11px;color:rgba(255,212,71,0.4);margin-bottom:4px;letter-spacing:.3px;}
+.rch-course{font-size:15px;font-weight:bold;margin-bottom:6px;}
+.rch-summary{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;}
+.rch-result{font-size:13px;font-weight:bold;background:rgba(0,0,0,0.4);border-radius:6px;padding:6px 10px;white-space:nowrap;text-align:center;flex-shrink:0;border-left:3px solid #8B6914;}
+.rch-chevron{font-size:18px;color:rgba(255,212,71,0.3);align-self:center;flex-shrink:0;transition:transform .2s;}
+.round-card.expanded .rch-chevron{transform:rotate(90deg);}
+.rch-del{background:none;border:none;color:rgba(255,77,77,0.4);font-size:16px;cursor:pointer;padding:0 2px;align-self:flex-start;flex-shrink:0;}
+.rch-del:active{color:#ff4d4d;}
+.round-detail{display:none;padding:0 14px 14px;}
+.round-card.expanded .round-detail{display:block;}
+.detail-section{margin-bottom:14px;}
+.detail-section h5{color:rgba(255,212,71,0.6);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px;border-bottom:1px solid rgba(255,212,71,0.1);padding-bottom:5px;}
+.leaderboard{display:flex;flex-direction:column;gap:4px;}
+.lb-row{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.35);border-radius:6px;padding:7px 10px;font-size:14px;border:1px solid rgba(255,212,71,0.06);}
+.lb-row.lb-winner{background:rgba(255,212,71,0.08);color:#ffd447;font-weight:bold;border-color:rgba(255,212,71,0.2);}
+.lb-row .lb-name{flex:1;}
+.lb-row .lb-score{font-weight:bold;}
+.sc-wrap{overflow-x:auto;margin-top:6px;}
+table.sc-table{width:100%;border-collapse:collapse;font-size:12px;}
+table.sc-table th{background:rgba(0,0,0,0.5);color:rgba(255,212,71,0.7);border:1px solid rgba(255,212,71,0.1);padding:5px 4px;text-align:center;white-space:nowrap;font-size:10px;letter-spacing:.5px;text-transform:uppercase;}
+table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-align:center;font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
+.settle-row{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.35);border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:13px;border:1px solid rgba(255,212,71,0.06);}
+.settle-from{color:#ff7b7b;font-weight:bold;}
+.settle-arrow{color:rgba(255,212,71,0.3);}
+.settle-to{color:#5ee87b;font-weight:bold;}
+.settle-amount{margin-left:auto;font-weight:bold;color:#ffd447;}
+.settle-all-square{font-size:13px;color:rgba(255,255,255,0.3);text-align:center;padding:4px 0;}
+.tag-good{color:#2ecc71;font-weight:bold;}
+.tag-bad{color:#ff4d4d;font-weight:bold;}
+.stn-panel{
+  background:
+    repeating-linear-gradient(45deg,rgba(255,212,71,0.02) 0,rgba(255,212,71,0.02) 1px,transparent 1px,transparent 10px),
+    repeating-linear-gradient(-45deg,rgba(255,212,71,0.02) 0,rgba(255,212,71,0.02) 1px,transparent 1px,transparent 10px),
+    #0e1a12;
+  border:2px solid #8B6914;
+  border-radius:12px;
+  margin-bottom:20px;
+  padding:16px 14px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6);
+}
+.stn-panel-title{color:#ffd447;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px;border-bottom:1px solid rgba(255,212,71,0.15);padding-bottom:6px;font-family:'Georgia',serif;}
+.stn-table{width:100%;border-collapse:collapse;}
+.stn-table th{font-size:10px;color:rgba(255,212,71,0.45);text-align:left;padding:5px 6px;border-bottom:1px solid rgba(255,212,71,0.1);white-space:nowrap;letter-spacing:.5px;text-transform:uppercase;}
+.stn-table th.num{text-align:right;}
+.stn-table td{padding:8px 6px;font-size:13px;border-bottom:1px solid rgba(255,212,71,0.06);vertical-align:middle;}
+.stn-table td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.stn-table tr:last-child td{border-bottom:none;}
+.stn-rank{width:24px;font-size:11px;font-weight:bold;color:rgba(255,255,255,0.3);text-align:center;padding-right:2px;}
+.stn-rank.r1{color:#ffd447;}
+.stn-rank.r2{color:#c0c0c0;}
+.stn-rank.r3{color:#cd7f32;}
+.stn-name{font-weight:bold;}
+.stn-name.leader{color:#ffd447;}
+.stn-pos{color:#4caf50;}
+.stn-neg{color:#f44336;}
+.stn-zero{color:rgba(255,255,255,0.3);}
+.rounds-label{font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:rgba(255,212,71,0.4);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,212,71,0.1);}
+.empty-state{text-align:center;color:rgba(255,255,255,0.3);font-size:14px;padding:60px 20px;line-height:2;}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a class="back-btn" href="index.html">‹ Game</a>
+  <div class="topnav-title">🏆 Trophy Room</div>
+  <div class="topnav-spacer"></div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" id="tabStandings" onclick="switchTab('standings')">🏅 Standings</div>
+  <div class="tab" id="tabRounds" onclick="switchTab('rounds')">📋 Rounds</div>
+</div>
+
+<div class="scroll-area" id="scrollArea"></div>
+
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+let activeTab = 'standings';
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem('gameHistory')||'[]').filter(r=>r.game==='banker'); }
+  catch(e){ return []; }
+}
+
+function saveHistory(arr){
+  try{
+    let all = JSON.parse(localStorage.getItem('gameHistory')||'[]');
+    let without = all.filter(r=>r.game!=='banker');
+    localStorage.setItem('gameHistory', JSON.stringify([...without, ...arr]));
+  }catch(e){}
+}
+
+function switchTab(tab){
+  activeTab = tab;
+  document.getElementById('tabStandings').classList.toggle('active', tab==='standings');
+  document.getElementById('tabRounds').classList.toggle('active', tab==='rounds');
+  render();
+}
+
+function render(){
+  const rounds = loadHistory();
+  const area = document.getElementById('scrollArea');
+  if(activeTab === 'standings'){
+    const rows = buildBankerStandings(rounds);
+    area.innerHTML = rows.length
+      ? renderStandingsPanel(rows)
+      : '<div class="empty-state">No rounds saved yet.<br>Finish a game to see standings here.</div>';
+  } else {
+    if(!rounds.length){
+      area.innerHTML = '<div class="empty-state">No rounds saved yet.<br>Finish a game to see results here.</div>';
+      return;
+    }
+    const sorted = [...rounds].reverse();
+    area.innerHTML = '<div class="rounds-label">Rounds</div>' + sorted.map(renderBankerCard).join('');
+  }
+}
+
+function buildBankerStandings(rounds){
+  const players = {};
+  for(const r of rounds){
+    if(!r.players || !r.playerNetTotals) continue;
+    const maxNet = Math.max(...r.playerNetTotals);
+    r.players.forEach((name, i)=>{
+      if(!players[name]) players[name] = {name, rounds:0, netBalance:0, wins:0};
+      const p = players[name];
+      p.rounds++;
+      p.netBalance += (r.playerNetTotals[i] || 0);
+      if(r.playerNetTotals[i] === maxNet) p.wins++;
+    });
+  }
+  return Object.values(players).sort((a,b)=>b.netBalance-a.netBalance);
+}
+
+function renderStandingsPanel(rows){
+  const thead = `<thead><tr>
+    <th class="stn-rank">#</th><th>Player</th>
+    <th class="num">Rnds</th><th class="num">Balance</th><th class="num">W</th>
+  </tr></thead>`;
+  const tbody = rows.map((p,i)=>{
+    let balHtml;
+    if(p.netBalance===0) balHtml=`<span class="stn-zero">$0</span>`;
+    else if(p.netBalance>0) balHtml=`<span class="stn-pos">+$${Math.abs(p.netBalance).toFixed(2).replace(/\.00$/,'')}</span>`;
+    else balHtml=`<span class="stn-neg">-$${Math.abs(p.netBalance).toFixed(2).replace(/\.00$/,'')}</span>`;
+    const rankCls = i===0?'r1':i===1?'r2':i===2?'r3':'';
+    return `<tr>
+      <td class="stn-rank ${rankCls}">${i+1}</td>
+      <td class="stn-name${i===0?' leader':''}">${esc(p.name)}</td>
+      <td class="num">${p.rounds}</td>
+      <td class="num">${balHtml}</td>
+      <td class="num">${p.wins}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="stn-panel">
+    <div class="stn-panel-title">♠ All-Time Standings</div>
+    <table class="stn-table">${thead}<tbody>${tbody}</tbody></table>
+  </div>`;
+}
+
+function renderBankerCard(r){
+  const date = new Date(r.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+  const nets = r.playerNetTotals || r.players.map(()=>0);
+  const maxNet = Math.max(...nets);
+  const winnerIdxs = nets.map((t,i)=>t===maxNet?i:-1).filter(i=>i>=0);
+  const winnerNames = winnerIdxs.map(i=>r.players[i]).join(' & ');
+
+  const lbHtml = r.players.map((name,i)=>({name, t:nets[i]}))
+    .sort((a,b)=>b.t-a.t)
+    .map((p,rank)=>{
+      const sign = p.t > 0 ? '+' : '';
+      const cls = p.t > 0 ? 'tag-good' : p.t < 0 ? 'tag-bad' : '';
+      return `<div class="lb-row ${rank===0&&p.t>0?'lb-winner':''}">
+        <span class="lb-name">${esc(p.name)}</span>
+        <span class="lb-score ${cls}">${sign}$${p.t}</span>
+      </div>`;
+    }).join('');
+
+  const txns = calcSettlement(r.players, nets);
+  const settlHtml = txns.length
+    ? txns.map(t=>`<div class="settle-row">
+        <span class="settle-from">${esc(t.from)}</span>
+        <span class="settle-arrow">owes</span>
+        <span class="settle-to">${esc(t.to)}</span>
+        <span class="settle-amount">$${t.amount.toFixed(2)}</span>
+      </div>`).join('')
+    : `<div class="settle-all-square">All square — no payments needed.</div>`;
+
+  let scHead, scRows = '';
+  if(r.holeHistory){
+    scHead = `<th>#</th>${r.players.map(n=>`<th>${esc(n)}</th>`).join('')}<th>Result</th>`;
+    r.holeHistory.forEach(h=>{
+      scRows += `<tr>
+        <td>${h.holeNum}</td>
+        ${h.scores.map((s,i)=>`<td${i===h.bankerIdx?' style="color:#ffd447;font-weight:bold"':''}>${s}</td>`).join('')}
+        <td style="font-size:11px;text-align:left">${h.allTied ? 'Carryover' :
+          h.matchups.filter(m=>m.result!=='tie').map(m=>
+            m.result==='banker'
+              ? `${esc(r.players[m.playerIdx])} -$${m.amount}`
+              : `${esc(r.players[m.playerIdx])} +$${m.amount}`
+          ).join(', ')}</td>
+      </tr>`;
+    });
+  }
+
+  return `<div class="round-card" id="card-${r.id}">
+    <div class="round-card-header" onclick="toggleCard(${r.id})">
+      <div class="rch-left">
+        <div class="rch-date">${date}${r.course ? ` &nbsp;·&nbsp; ${esc(r.course)}` : ''}</div>
+        <div class="rch-summary">${r.players.map(n=>esc(n)).join(' · ')} &nbsp;|&nbsp; $${r.minValue??1}–$${r.maxValue??5}</div>
+      </div>
+      <div class="rch-result">🏆 ${esc(winnerNames)}<br>+$${maxNet}</div>
+      <button class="rch-del" onclick="deleteRound(event,${r.id})" title="Delete">✕</button>
+      <div class="rch-chevron">›</div>
+    </div>
+    <div class="round-detail">
+      <div class="detail-section">
+        <h5>Net Totals</h5>
+        <div class="leaderboard">${lbHtml}</div>
+      </div>
+      <div class="detail-section">
+        <h5>Settlement</h5>
+        ${settlHtml}
+      </div>
+      ${scHead ? `<div class="detail-section">
+        <h5>Scorecard</h5>
+        <div class="sc-wrap">
+          <table class="sc-table">
+            <thead><tr>${scHead}</tr></thead>
+            <tbody>${scRows}</tbody>
+          </table>
+        </div>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+function toggleCard(id){
+  const card = document.getElementById('card-'+id);
+  if(card) card.classList.toggle('expanded');
+}
+
+function deleteRound(e, id){
+  e.stopPropagation();
+  if(!confirm('Delete this round?')) return;
+  const rounds = loadHistory().filter(r=>r.id!==id);
+  saveHistory(rounds);
+  render();
+}
+
+function calcSettlement(players, nets){
+  let creditors = [], debtors = [];
+  nets.forEach((v,i)=>{
+    if(v > 0.001) creditors.push({idx:i, amt:v});
+    else if(v < -0.001) debtors.push({idx:i, amt:-v});
+  });
+  creditors.sort((a,b)=>b.amt-a.amt);
+  debtors.sort((a,b)=>b.amt-a.amt);
+  let transactions = [], ci=0, di=0;
+  while(ci<creditors.length && di<debtors.length){
+    let c=creditors[ci], d=debtors[di];
+    let settle = Math.round(Math.min(c.amt,d.amt)*100)/100;
+    if(settle>0) transactions.push({from:players[d.idx], to:players[c.idx], amount:settle});
+    c.amt-=settle; d.amt-=settle;
+    if(c.amt<0.001) ci++;
+    if(d.amt<0.001) di++;
+  }
+  return transactions;
+}
+
+switchTab('standings');
+</script>
+</body>
+</html>
