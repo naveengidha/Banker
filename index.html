@@ -528,6 +528,21 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
 .sc-wager.doubled{color:rgba(255,212,71,0.7);}
 .sc-d{font-size:8px;font-weight:bold;background:rgba(255,212,71,0.2);color:#ffd447;border-radius:2px;padding:0 3px;margin-left:2px;font-family:Arial,sans-serif;vertical-align:middle;}
 
+/* ── Banker change toast ── */
+.banker-toast{
+  position:fixed;bottom:88px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#8B6914,#ffd447,#8B6914);
+  color:#0a0a00;font-size:13px;font-weight:bold;
+  letter-spacing:1.5px;text-transform:uppercase;
+  padding:10px 22px;border-radius:24px;
+  box-shadow:0 4px 20px rgba(255,212,71,0.4);
+  font-family:'Georgia','Times New Roman',serif;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s ease;
+  z-index:200;white-space:nowrap;
+}
+.banker-toast.show{ opacity:1; }
+
 /* ── Final screen ── */
 .final-wrap{
   background:
@@ -766,6 +781,8 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
 </div>
 </div>
 
+<div id="bankerToast" class="banker-toast"></div>
+
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
@@ -843,6 +860,7 @@ function startGame(){
   document.getElementById('setupScreen').classList.add('hidden');
   document.getElementById('gameScreen').classList.remove('hidden');
   document.getElementById('topnavTitle').textContent = 'Banker';
+  document.querySelector('.topnav-trophy').style.visibility = 'hidden';
 
   renderHoleHeader();
   renderTable();
@@ -868,10 +886,12 @@ function renderCarryoverStrip(){
   const list   = document.getElementById('carryoverList');
   if(!panel || !list) return;
   const nonBankers = playerNames.map((_,i)=>i).filter(i=>i!==bankerIdx);
-  const carrying = nonBankers.filter(i => carryovers[i] > 0);
-  list.innerHTML = carrying.map(i =>
-    `<div class="flank-row"><span class="flank-name">${esc(playerNames[i])}</span><span class="flank-val pos">+$${carryovers[i]}</span></div>`
-  ).join('');
+  list.innerHTML = nonBankers.map(i => {
+    const v = carryovers[i] || 0;
+    const cls = v > 0 ? 'pos' : 'zero';
+    const label = v > 0 ? '+$'+v : '$0';
+    return `<div class="flank-row"><span class="flank-name">${esc(playerNames[i])}</span><span class="flank-val ${cls}">${label}</span></div>`;
+  }).join('');
 }
 
 function renderTable(){
@@ -1019,6 +1039,7 @@ function resolveHole(){
 
   if(nextBankerIdx !== bankerIdx){
     carryovers = new Array(playerNames.length).fill(0);
+    showBankerToast(playerNames[nextBankerIdx]);
   }
 
   holeHistory.push({
@@ -1170,6 +1191,7 @@ function endGame(){
   saveGameResult();
   document.getElementById('gameScreen').classList.add('hidden');
   document.getElementById('finalScreen').classList.remove('hidden');
+  document.querySelector('.topnav-trophy').style.visibility = 'visible';
 
   let hdr = document.getElementById('resultsHeader');
   hdr.innerHTML = '<th>Hole</th>'
@@ -1257,6 +1279,13 @@ function renderSettlement(){
       <span class="settle-amount">$${t.amount.toFixed(2)}</span>
     </div>`).join('');
   el.innerHTML = `<div class="settlement-box"><h3>💰 Settlement</h3>${rows}</div>`;
+}
+
+function showBankerToast(name){
+  const t = document.getElementById('bankerToast');
+  t.textContent = 'New Banker: ' + name;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 function flipCard(id){
