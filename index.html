@@ -15,12 +15,6 @@
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;color:#fff;min-height:100vh;display:flex;flex-direction:column;}
 button{font-family:inherit;cursor:pointer;}
 
-/* ── Top nav ── */
-.topnav{display:flex;align-items:center;padding:12px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);position:sticky;top:0;z-index:50;flex-shrink:0;}
-.back-btn{background:none;border:none;color:rgba(255,212,71,0.8);font-size:15px;padding:4px 8px 4px 0;letter-spacing:.3px;}
-.topnav-title{flex:1;text-align:center;font-size:15px;font-weight:bold;letter-spacing:2px;color:#ffd447;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
-.topnav-trophy{background:none;border:none;color:rgba(255,212,71,0.8);font-size:15px;padding:4px 0 4px 8px;letter-spacing:.3px;width:48px;text-align:right;}
-
 /* ── Scroll area ── */
 .scroll-area{flex:1;overflow-y:auto;padding:12px 14px 16px;display:flex;justify-content:center;align-items:flex-start;}
 
@@ -184,7 +178,36 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 .rules-table td:last-child{font-weight:bold;font-family:'Courier New',monospace;color:rgba(255,212,71,0.9);}
 .rules-note{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.8;text-align:center;margin-top:4px;letter-spacing:.3px;}
 
-/* ── Table felt ── */
+/* ── Trophy nav card ── */
+.trophy-card{
+  margin-top:12px;
+  background:#0e1a12;
+  border:3px solid #8B6914;
+  border-radius:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,212,71,0.08);
+  overflow:hidden;
+}
+.trophy-card-link{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;
+  text-decoration:none;
+  color:#fff;
+  cursor:pointer;
+}
+.trophy-card-link:active{background:rgba(255,212,71,0.04);}
+.trophy-card-icon{font-size:28px;flex-shrink:0;}
+.trophy-card-text{}
+.trophy-card-title{
+  font-size:14px;font-weight:bold;
+  color:#ffd447;
+  letter-spacing:2px;text-transform:uppercase;
+  font-family:'Georgia','Times New Roman',serif;
+  margin-bottom:2px;
+}
+.trophy-card-sub{font-size:11px;color:rgba(255,212,71,0.4);letter-spacing:.5px;}
+.trophy-card-chevron{margin-left:auto;font-size:20px;color:rgba(255,212,71,0.3);flex-shrink:0;}
+
+/* ── Trophy nav card ── */
 .table-felt{
   background:
     repeating-linear-gradient(45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),
@@ -590,16 +613,45 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
 .net-table td.pos{color:#5ee87b;font-weight:bold;}
 .net-table td.neg{color:#ff7b7b;font-weight:bold;}
 .net-table td.zero{color:rgba(255,255,255,0.3);}
+
+/* ── Insights modal ── */
+.stn-panel{
+  background:
+    repeating-linear-gradient(45deg,rgba(255,212,71,0.02) 0,rgba(255,212,71,0.02) 1px,transparent 1px,transparent 10px),
+    repeating-linear-gradient(-45deg,rgba(255,212,71,0.02) 0,rgba(255,212,71,0.02) 1px,transparent 1px,transparent 10px),
+    #0e1a12;
+  border:2px solid #8B6914;border-radius:12px;margin-bottom:14px;padding:14px 12px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6);
+}
+.stn-panel-title{color:#ffd447;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px;border-bottom:1px solid rgba(255,212,71,0.15);padding-bottom:6px;font-family:'Georgia',serif;text-align:center;}
+.stn-table-wrap{border:1px solid rgba(255,255,255,0.2);border-radius:6px;overflow:hidden;margin-bottom:10px;}
+.stn-table-wrap-title{color:rgba(255,212,71,0.6);font-size:9px;letter-spacing:2px;text-transform:uppercase;font-family:'Georgia',serif;padding:6px 8px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.18);text-align:center;}
+.stn-table{width:100%;border-collapse:collapse;}
+.stn-table th{font-size:9px;color:rgba(255,212,71,0.45);text-align:center;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,0.18);white-space:nowrap;letter-spacing:.5px;text-transform:uppercase;}
+.stn-table th.num{text-align:center;}
+.stn-table td{padding:7px 6px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.12);vertical-align:middle;text-align:center;}
+.stn-table td.num{text-align:center;font-variant-numeric:tabular-nums;font-family:'Courier New',monospace;}
+.stn-table tr:last-child td{border-bottom:none;}
+.stn-pos{color:#4caf50;}
+.stn-neg{color:#f44336;}
+.stn-zero{color:rgba(255,255,255,0.3);}
+.insights-select{
+  display:block;
+  width:auto;min-width:180px;max-width:80%;
+  padding:8px 14px;margin:0 auto 14px;
+  border-radius:6px;border:1px solid rgba(255,212,71,0.35);
+  border-bottom:2px solid rgba(255,212,71,0.6);
+  font-size:13px;background:rgba(0,0,0,0.5);color:#ffd447;
+  font-family:'Courier New',monospace;
+  -webkit-appearance:none;appearance:none;text-align:center;
+}
+.insights-select:focus{outline:none;border-color:#ffd447;}
+.insights-empty{text-align:center;color:rgba(255,255,255,0.3);font-size:13px;padding:32px 0;line-height:2;}
+
 .hidden{display:none!important;}
 </style>
 </head>
 <body>
-
-<div class="topnav">
-  <div style="width:48px;"></div>
-  <div class="topnav-title" id="topnavTitle"></div>
-  <button class="topnav-trophy" onclick="window.location.href='trophy.html'">🏆</button>
-</div>
 
 <div class="scroll-area">
 <div class="container">
@@ -611,7 +663,7 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
         <div class="flip-inner" id="setupFlip">
 
           <div class="flip-front">
-            <h2>Banker</h2>
+            <h2 onclick="handleInsightTap()" style="cursor:default;-webkit-user-select:none;user-select:none;">Banker</h2>
             <div class="setup-card-sub">New Round</div>
             <div class="setup-section-label">Date</div>
             <input type="date" class="course-input" id="roundDate">
@@ -671,6 +723,17 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
         </div>
       </div>
       <button class="flip-btn" onclick="flipCard('setupFlip')" title="How to play">i</button>
+    </div>
+
+    <div class="trophy-card">
+      <a class="trophy-card-link" href="trophy.html">
+        <div class="trophy-card-icon">🏆</div>
+        <div class="trophy-card-text">
+          <div class="trophy-card-title">Standings &amp; Scorecards</div>
+          <div class="trophy-card-sub">All-time results &amp; round history</div>
+        </div>
+        <div class="trophy-card-chevron">›</div>
+      </a>
     </div>
   </div>
 
@@ -783,6 +846,16 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
 
 <div id="bankerToast" class="banker-toast"></div>
 
+<div id="insightsModal" class="hidden modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>♠ Insights</span>
+      <button class="close-btn" onclick="closeInsights()">✕</button>
+    </div>
+    <div class="modal-body" id="insightsBody"></div>
+  </div>
+</div>
+
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(()=>{});
@@ -859,8 +932,6 @@ function startGame(){
 
   document.getElementById('setupScreen').classList.add('hidden');
   document.getElementById('gameScreen').classList.remove('hidden');
-  document.getElementById('topnavTitle').textContent = 'Banker';
-  document.querySelector('.topnav-trophy').style.visibility = 'hidden';
 
   renderHoleHeader();
   renderTable();
@@ -1191,7 +1262,6 @@ function endGame(){
   saveGameResult();
   document.getElementById('gameScreen').classList.add('hidden');
   document.getElementById('finalScreen').classList.remove('hidden');
-  document.querySelector('.topnav-trophy').style.visibility = 'visible';
 
   let hdr = document.getElementById('resultsHeader');
   hdr.innerHTML = '<th>Hole</th>'
@@ -1296,6 +1366,172 @@ function flipCard(id){
 }
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── Insights ── */
+let _insightClicks = 0, _insightTimer = null;
+function handleInsightTap(){
+  _insightClicks++;
+  clearTimeout(_insightTimer);
+  _insightTimer = setTimeout(()=>{ _insightClicks = 0; }, 600);
+  if(_insightClicks >= 3){ _insightClicks = 0; openInsights(); }
+}
+
+function openInsights(){
+  const modal = document.getElementById('insightsModal');
+  renderInsightsBody();
+  modal.classList.remove('hidden');
+  modal.addEventListener('click', _insightsOutsideClick);
+}
+
+function closeInsights(){
+  const modal = document.getElementById('insightsModal');
+  modal.classList.add('hidden');
+  modal.removeEventListener('click', _insightsOutsideClick);
+}
+
+function _insightsOutsideClick(e){
+  if(e.target === document.getElementById('insightsModal')) closeInsights();
+}
+
+function loadAllRounds(){
+  try{ return JSON.parse(localStorage.getItem('gameHistory')||'[]').filter(r=>r.game==='banker'); }
+  catch(e){ return []; }
+}
+
+function renderInsightsBody(){
+  const rounds = loadAllRounds();
+  const body = document.getElementById('insightsBody');
+
+  const playerSet = new Set();
+  rounds.forEach(r=>{ if(r.players) r.players.forEach(n=>playerSet.add(n)); });
+  const players = [...playerSet].sort();
+
+  if(!players.length){
+    body.innerHTML = `<div class="insights-empty">No rounds saved yet.<br>Finish a game to see insights here.</div>`;
+    return;
+  }
+
+  const options = players.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  body.innerHTML = `
+    <select class="insights-select" id="insightsSelect" onchange="renderInsightsStats()" >
+      <option value="">Select a player…</option>
+      ${options}
+    </select>
+    <div id="insightsStats"></div>`;
+}
+
+function renderInsightsStats(){
+  const name = document.getElementById('insightsSelect').value;
+  const out = document.getElementById('insightsStats');
+  if(!name){ out.innerHTML=''; return; }
+
+  const rounds = loadAllRounds().filter(r=>r.players && r.players.includes(name));
+  if(!rounds.length){ out.innerHTML='<div class="insights-empty">No data for this player.</div>'; return; }
+
+  // ── Overview ──
+  let netBalance = 0;
+  rounds.forEach(r=>{
+    const i = r.players.indexOf(name);
+    netBalance += (r.playerNetTotals && r.playerNetTotals[i]) || 0;
+  });
+  const avgPerRound = rounds.length ? netBalance / rounds.length : 0;
+  const balCls = netBalance>0?'stn-pos':netBalance<0?'stn-neg':'stn-zero';
+  const avgCls = avgPerRound>0?'stn-pos':avgPerRound<0?'stn-neg':'stn-zero';
+
+  // ── Non-banker stats ──
+  let nb_holes=0, nb_wins=0, nb_ties=0, nb_losses=0;
+  let nb_wagerSum=0, nb_doubles=0, nb_doubleWins=0;
+
+  // ── Banker stats ──
+  let bk_holes=0, bk_wins=0, bk_blowups=0;
+
+  rounds.forEach(r=>{
+    const playerIdx = r.players.indexOf(name);
+    if(!r.holeHistory) return;
+    r.holeHistory.forEach(h=>{
+      if(h.bankerIdx === playerIdx){
+        // This player was banker this hole
+        bk_holes++;
+        const results = h.matchups.map(m=>m.result);
+        const bankerWonAll = results.every(res=>res==='banker');
+        const bankerLostAll = results.every(res=>res==='player');
+        if(bankerWonAll) bk_wins++;
+        if(bankerLostAll) bk_blowups++;
+      } else {
+        // This player was a non-banker this hole
+        const m = h.matchups.find(m=>m.playerIdx===playerIdx);
+        if(!m) return;
+        nb_holes++;
+        nb_wagerSum += m.holeValue || 0;
+        if(m.result==='player') nb_wins++;
+        else if(m.result==='tie') nb_ties++;
+        else nb_losses++;
+        if(m.doubled){ nb_doubles++; if(m.result==='player') nb_doubleWins++; }
+      }
+    });
+  });
+
+  const pct = (n,d) => d>0 ? (n/d*100).toFixed(0)+'%' : '—';
+  const dollar = v => {
+    const s = Math.abs(v).toFixed(2).replace(/\.00$/,'');
+    return v>0?`<span class="stn-pos">+$${s}</span>`:v<0?`<span class="stn-neg">-$${s}</span>`:`<span class="stn-zero">$0</span>`;
+  };
+
+  const avgWager = nb_holes>0 ? '$'+(nb_wagerSum/nb_holes).toFixed(2).replace(/\.00$/,'') : '—';
+  const doubleWinRate = nb_doubles>0 ? pct(nb_doubleWins,nb_doubles) : '—';
+  const bkWinRate = bk_holes>0 ? pct(bk_wins,bk_holes) : '—';
+  const bkBlowupRate = bk_holes>0 ? pct(bk_blowups,bk_holes) : '—';
+
+  out.innerHTML = `
+  <div class="stn-panel">
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">Overview</div>
+      <table class="stn-table">
+        <thead><tr><th>Rounds</th><th class="num">Net Balance</th><th class="num">Avg / Round</th></tr></thead>
+        <tbody><tr>
+          <td>${rounds.length}</td>
+          <td class="num">${dollar(netBalance)}</td>
+          <td class="num">${dollar(avgPerRound)}</td>
+        </tr></tbody>
+      </table>
+    </div>
+
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">As Non-Banker (${nb_holes} holes)</div>
+      <table class="stn-table">
+        <thead><tr><th class="num">Won</th><th class="num">Tied</th><th class="num">Lost</th><th class="num">Avg Wager</th></tr></thead>
+        <tbody><tr>
+          <td class="num ${nb_wins>nb_losses?'stn-pos':''}">${pct(nb_wins,nb_holes)}</td>
+          <td class="num">${pct(nb_ties,nb_holes)}</td>
+          <td class="num ${nb_losses>nb_wins?'stn-neg':''}">${pct(nb_losses,nb_holes)}</td>
+          <td class="num">${avgWager}</td>
+        </tr></tbody>
+      </table>
+    </div>
+
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">Doubling (${nb_doubles} holes doubled)</div>
+      <table class="stn-table">
+        <thead><tr><th class="num">Double Rate</th><th class="num">Win Rate When Doubled</th></tr></thead>
+        <tbody><tr>
+          <td class="num">${pct(nb_doubles,nb_holes)}</td>
+          <td class="num">${doubleWinRate}</td>
+        </tr></tbody>
+      </table>
+    </div>
+
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">As Banker (${bk_holes} holes)</div>
+      <table class="stn-table">
+        <thead><tr><th class="num">Sweep Rate</th><th class="num">Blow-Up Rate</th></tr></thead>
+        <tbody><tr>
+          <td class="num ${bk_wins>0?'stn-pos':''}">${bkWinRate}</td>
+          <td class="num ${bk_blowups>0?'stn-neg':''}">${bkBlowupRate}</td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>`;
+}
 </script>
 </body>
 </html>
