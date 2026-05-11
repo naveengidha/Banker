@@ -12,7 +12,7 @@
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;margin:0;padding:0;color:#fff;display:flex;flex-direction:column;min-height:100vh;}
-.topnav{display:flex;align-items:center;padding:12px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(184,150,46,0.2);position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topnav{display:flex;align-items:center;padding:12px 14px;background:#080f0a;border-bottom:1px solid rgba(184,150,46,0.2);position:sticky;top:0;z-index:50;flex-shrink:0;}
 .back-btn{background:none;border:none;color:#ffd447;font-size:15px;font-weight:bold;cursor:pointer;padding:4px 8px 4px 0;text-decoration:none;letter-spacing:2px;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
 .topnav-title{flex:1;text-align:center;font-size:15px;font-weight:bold;letter-spacing:2px;color:#ffd447;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
 .topnav-spacer{width:70px;}
@@ -58,6 +58,7 @@ table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-al
 .settle-to{color:#5ee87b;font-weight:bold;}
 .settle-amount{margin-left:auto;font-weight:bold;color:#ffd447;}
 .settle-all-square{font-size:13px;color:rgba(255,255,255,0.3);text-align:center;padding:4px 0;}
+.match-summary{font-size:13px;color:rgba(255,255,255,0.72);line-height:1.75;background:rgba(0,0,0,0.25);border-radius:7px;padding:11px 13px;border-left:3px solid rgba(184,150,46,0.4);}
 .tag-good{color:#2ecc71;font-weight:bold;}
 .tag-bad{color:#ff4d4d;font-weight:bold;}
 .stn-panel{
@@ -89,14 +90,18 @@ table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-al
 .stn-zero{color:rgba(255,255,255,0.3);}
 .rounds-label{font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:rgba(255,212,71,0.4);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,212,71,0.1);}
 .empty-state{text-align:center;color:rgba(255,255,255,0.3);font-size:14px;padding:60px 20px;line-height:2;}
+.stone{font-size:8px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;border-radius:10px;padding:2px 7px;border:1px solid;margin-right:3px;white-space:nowrap;}
+.stone-kingpin   {color:#7eb8f7;border-color:rgba(126,184,247,0.35);background:rgba(126,184,247,0.1);}
+.stone-highroller{color:#ffd447;border-color:rgba(255,212,71,0.35); background:rgba(255,212,71,0.1);}
+.stone-thebanker {color:#52d68a;border-color:rgba(82,214,138,0.35); background:rgba(82,214,138,0.1);}
+.stone-heater    {color:#f97316;border-color:rgba(249,115,22,0.35); background:rgba(249,115,22,0.1);}
+.stone-shark     {color:#c084fc;border-color:rgba(192,132,252,0.35);background:rgba(192,132,252,0.1);}
 </style>
 </head>
 <body>
 
 <div class="topnav">
   <a class="back-btn" href="index.html">‹ Menu</a>
-  <div class="topnav-title">Trophy Room</div>
-  <div class="topnav-spacer"></div>
 </div>
 
 <div class="tab-bar">
@@ -114,6 +119,66 @@ if('serviceWorker' in navigator){
 let activeTab = 'standings';
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function computeTitlesAtHole(r, upToHoleNum){
+  const n = r.players.length;
+  const history = r.holeHistory.filter(h => h.holeNum <= upToHoleNum);
+  const lastH = history[history.length - 1];
+  const bankerIdx = lastH ? lastH.nextBankerIdx : 0;
+  const nets = new Array(n).fill(0);
+  history.forEach(h => {
+    h.matchups.forEach(m => {
+      if(m.result==='banker'){ nets[h.bankerIdx]+=m.amount; nets[m.playerIdx]-=m.amount; }
+      else if(m.result==='player'){ nets[m.playerIdx]+=m.amount; nets[h.bankerIdx]-=m.amount; }
+    });
+  });
+  const titles = r.players.map(() => ({kingpin:false,highroller:false,thebanker:false,heater:false,shark:false}));
+
+  // Ace (blue) — most matchup wins
+  const matchupWins = new Array(n).fill(0);
+  history.forEach(h => { h.matchups.forEach(m => {
+    if(m.result==='player') matchupWins[m.playerIdx]++;
+    else if(m.result==='banker') matchupWins[h.bankerIdx]++;
+  }); });
+  const maxWins = Math.max(...matchupWins);
+  if(maxWins > 0){ const l = matchupWins.map((w,i)=>w===maxWins?i:-1).filter(i=>i>=0); if(l.length===1) titles[l[0]].kingpin=true; }
+
+  // Whale (gold) — highest net
+  const maxNet = Math.max(...nets);
+  if(maxNet > 0){ const l = nets.map((t,i)=>t===maxNet?i:-1).filter(i=>i>=0); if(l.length===1) titles[l[0]].highroller=true; }
+
+  // Banker (green) — current banker
+  titles[bankerIdx].thebanker = true;
+
+  // Heater (orange) — longest active streak ≥2, ties neutral
+  const streaks = new Array(n).fill(0);
+  for(let pi=0; pi<n; pi++){
+    let s=0;
+    for(let hi=history.length-1; hi>=0; hi--){
+      const h=history[hi];
+      let profitable=false, tied=false;
+      if(h.bankerIdx===pi){ profitable=h.matchups.some(m=>m.result==='banker'); tied=h.matchups.every(m=>m.result==='tie'); }
+      else { const m=h.matchups.find(m=>m.playerIdx===pi); if(m&&m.result==='player') profitable=true; if(m&&m.result==='tie') tied=true; }
+      if(profitable) s++;
+      else if(tied) continue;
+      else break;
+    }
+    streaks[pi]=s;
+  }
+  const maxStreak=Math.max(...streaks);
+  if(maxStreak>=2){ const l=streaks.map((s,i)=>s===maxStreak?i:-1).filter(i=>i>=0); if(l.length===1) titles[l[0]].heater=true; }
+
+  // Shark (purple) — biggest single payday
+  const bigPayday=new Array(n).fill(0);
+  history.forEach(h => { h.matchups.forEach(m => {
+    if(m.result==='player') bigPayday[m.playerIdx]=Math.max(bigPayday[m.playerIdx],m.amount);
+    else if(m.result==='banker') bigPayday[h.bankerIdx]=Math.max(bigPayday[h.bankerIdx],m.amount);
+  }); });
+  const maxPayday=Math.max(...bigPayday);
+  if(maxPayday>0){ const l=bigPayday.map((v,i)=>v===maxPayday?i:-1).filter(i=>i>=0); if(l.length===1) titles[l[0]].shark=true; }
+
+  return titles;
+}
 
 function loadHistory(){
   try{ return JSON.parse(localStorage.getItem('gameHistory')||'[]').filter(r=>r.game==='banker'); }
@@ -149,7 +214,7 @@ function render(){
       return;
     }
     const sorted = [...rounds].reverse();
-    area.innerHTML = '<div class="rounds-label">Rounds</div>' + sorted.map(renderBankerCard).join('');
+    area.innerHTML = sorted.map(renderBankerCard).join('');
   }
 }
 
@@ -194,6 +259,102 @@ function renderStandingsPanel(rows){
   </div>`;
 }
 
+function generateMatchSummary(r){
+  if(!r.holeHistory || !r.holeHistory.length) return null;
+  const holes = r.holeHistory;
+  const nets = r.playerNetTotals || r.players.map(()=>0);
+  const numHoles = holes.length;
+
+  // Winner(s)
+  const maxNet = Math.max(...nets);
+  const minNet = Math.min(...nets);
+  const winnerIdxs = nets.map((t,i)=>t===maxNet?i:-1).filter(i=>i>=0);
+  const winnerNames = winnerIdxs.map(i=>r.players[i]).join(' & ');
+
+  // Banker frequency
+  const bankerCount = {};
+  r.players.forEach((_,i)=>{ bankerCount[i]=0; });
+  holes.forEach(h=>{ bankerCount[h.bankerIdx]=(bankerCount[h.bankerIdx]||0)+1; });
+  const topBankerIdx = Object.keys(bankerCount).reduce((a,b)=>bankerCount[a]>bankerCount[b]?a:b);
+  const topBankerName = r.players[+topBankerIdx];
+  const topBankerHoles = bankerCount[+topBankerIdx];
+
+  // Banker wins / losses when that player was banker
+  let bankerWins = 0, bankerLosses = 0;
+  holes.forEach(h=>{
+    h.matchups.forEach(m=>{
+      if(m.result==='banker') bankerWins++;
+      else if(m.result==='player') bankerLosses++;
+    });
+  });
+
+  // Doubles used
+  let totalDoubles = 0;
+  holes.forEach(h=>{
+    h.matchups.forEach(m=>{ if(m.doubled||m.bankerDoubled) totalDoubles++; });
+  });
+
+  // Carryover holes
+  const carryovers = holes.filter(h=>h.allTied).length;
+
+  // Biggest single swing hole (highest wager resolved, not tied)
+  let biggestHole = null, biggestAmt = 0;
+  holes.forEach(h=>{
+    if(h.allTied) return;
+    h.matchups.forEach(m=>{
+      if(m.result!=='tie' && m.amount > biggestAmt){
+        biggestAmt = m.amount;
+        biggestHole = h;
+      }
+    });
+  });
+
+  // Build sentences
+  const sentences = [];
+
+  // S1: Overview
+  const course = r.course ? ` at ${r.course}` : '';
+  const wageRange = `$${r.minValue??1}–$${r.maxValue??5}`;
+  sentences.push(`${r.players.join(', ')} played a ${numHoles}-hole Banker game${course} with wagers ranging ${wageRange}.`);
+
+  // S2: Winner
+  if(maxNet > 0){
+    const margin = maxNet - (nets.filter((_,i)=>!winnerIdxs.includes(i)).reduce((a,b)=>Math.max(a,b),-Infinity));
+    sentences.push(`${winnerNames} came out on top, finishing +$${maxNet}${margin>0?' ahead of the field':''}.`);
+  } else {
+    sentences.push(`The round ended all square — no player finished in the black.`);
+  }
+
+  // S3: Banker dominance or struggle
+  const bankerRate = bankerWins / (bankerWins + bankerLosses || 1);
+  if(bankerWins + bankerLosses > 0){
+    if(bankerRate >= 0.6){
+      sentences.push(`The banker position was a strong advantage today, winning ${bankerWins} of ${bankerWins+bankerLosses} matchups.`);
+    } else if(bankerRate <= 0.4){
+      sentences.push(`Players gained the upper hand against the banker, winning ${bankerLosses} of ${bankerWins+bankerLosses} matchups.`);
+    } else {
+      sentences.push(`Banker matchups were closely contested — ${bankerWins} banker wins to ${bankerLosses} player wins across the round.`);
+    }
+  }
+
+  // S4: Doubles / carryovers / biggest hole
+  const extras = [];
+  if(totalDoubles > 0) extras.push(`${totalDoubles} double${totalDoubles>1?'s':''} were called`);
+  if(carryovers > 0) extras.push(`${carryovers} hole${carryovers>1?'s':''} carried over`);
+  if(extras.length) sentences.push(extras.join(' and ').charAt(0).toUpperCase() + extras.join(' and ').slice(1) + ', keeping the pressure on throughout.');
+
+  // S5: Biggest swing
+  if(biggestHole){
+    const bigM = biggestHole.matchups.find(m=>m.amount===biggestAmt && m.result!=='tie');
+    if(bigM){
+      const winner = bigM.result==='banker' ? r.players[biggestHole.bankerIdx] : r.players[bigM.playerIdx];
+      sentences.push(`The biggest swing came on hole ${biggestHole.holeNum}, where ${winner} won a $${biggestAmt} matchup${bigM.doubled||bigM.bankerDoubled?' with a double on the line':''}.`);
+    }
+  }
+
+  return sentences.join(' ');
+}
+
 function renderBankerCard(r){
   const date = new Date(r.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
   const nets = r.playerNetTotals || r.players.map(()=>0);
@@ -224,7 +385,7 @@ function renderBankerCard(r){
 
   let scHead, scRows = '';
   if(r.holeHistory){
-    scHead = `<th>#</th>${r.players.map(n=>`<th>${esc(n)}</th>`).join('')}<th>Banker</th><th>Result</th>`;
+    scHead = `<th>#</th>${r.players.map(n=>`<th>${esc(n)}</th>`).join('')}<th>Result</th>${r.casinoTitlesMode ? '<th>Titles</th>' : ''}`;
     r.holeHistory.forEach(h=>{
       const winners = new Set(h.matchups.filter(m=>m.result==='player').map(m=>m.playerIdx));
       const matchupMap = {};
@@ -249,7 +410,24 @@ function renderBankerCard(r){
           ? `<span class="sc-neg">${esc(r.players[m.playerIdx])} −$${m.amount}</span>`
           : `<span class="sc-pos">${esc(r.players[m.playerIdx])} +$${m.amount}</span>`
       );
-      scRows += `<tr><td>${h.holeNum}</td>${cells}<td class="sc-banker-cell">${esc(r.players[h.bankerIdx])}</td><td class="sc-result-col">${parts.join('<br>')}</td></tr>`;
+      let titlesCell = '';
+      if(r.casinoTitlesMode){
+        const ct = computeTitlesAtHole(r, h.holeNum);
+        const badges = r.players.map((name, i) => {
+          const t = ct[i];
+          const held = [
+            t.kingpin    ? `<span class="stone stone-kingpin"    style="padding:1px 4px;font-size:7px;">Ace</span>`    : '',
+            t.highroller ? `<span class="stone stone-highroller" style="padding:1px 4px;font-size:7px;">Whale</span>`  : '',
+            t.thebanker  ? `<span class="stone stone-thebanker"  style="padding:1px 4px;font-size:7px;">BK</span>`     : '',
+            t.heater     ? `<span class="stone stone-heater"     style="padding:1px 4px;font-size:7px;">Heater</span>` : '',
+            t.shark      ? `<span class="stone stone-shark"      style="padding:1px 4px;font-size:7px;">Shark</span>`  : '',
+          ].filter(Boolean);
+          if(!held.length) return '';
+          return `<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:1px;">${esc(name)}: ${held.join('')}</div>`;
+        }).join('');
+        titlesCell = `<td style="padding:3px 4px;min-width:60px;">${badges||'<span style="color:rgba(255,255,255,0.2);font-size:10px;">—</span>'}</td>`;
+      }
+      scRows += `<tr><td>${h.holeNum}</td>${cells}<td class="sc-result-col">${parts.join('<br>')}</td>${titlesCell}</tr>`;
     });
   }
 
@@ -281,6 +459,7 @@ function renderBankerCard(r){
           </table>
         </div>
       </div>` : ''}
+      ${(()=>{ const s=generateMatchSummary(r); return s ? `<div class="detail-section"><h5>Match Summary</h5><div class="match-summary">${s}</div></div>` : ''; })()}
     </div>
   </div>`;
 }

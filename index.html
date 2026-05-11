@@ -178,6 +178,88 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 .rules-table td:last-child{font-weight:bold;font-family:'Courier New',monospace;color:rgba(255,212,71,0.9);}
 .rules-note{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.8;text-align:center;margin-top:4px;letter-spacing:.3px;}
 
+/* ── Live leaderboard card ── */
+.live-lb-card{
+  margin-top:12px;
+  background:
+    repeating-linear-gradient(45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),
+    repeating-linear-gradient(-45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),
+    #0e1a12;
+  border:3px solid #8B6914;
+  border-radius:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,212,71,0.08);
+  padding:14px 16px 16px;
+}
+.live-lb-title{
+  font-size:10px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,212,71,0.45);
+  margin-bottom:10px;
+  border-bottom:1px solid rgba(255,212,71,0.12);
+  padding-bottom:6px;
+  font-family:'Georgia','Times New Roman',serif;
+}
+.live-lb-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;
+  border-radius:7px;
+  margin-bottom:5px;
+  background:rgba(0,0,0,0.3);
+  border:1px solid rgba(255,212,71,0.07);
+  font-size:14px;
+}
+.live-lb-row:last-child{margin-bottom:0;}
+.live-lb-row.is-banker{background:rgba(255,212,71,0.07);border-color:rgba(255,212,71,0.2);}
+.live-lb-row.is-leader{background:rgba(255,212,71,0.1);border-color:rgba(255,212,71,0.3);}
+.live-lb-name{flex:1;font-weight:bold;font-size:13px;}
+.live-lb-name.leader-name{color:#ffd447;}
+.live-lb-badge{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,212,71,0.5);background:rgba(255,212,71,0.1);border:1px solid rgba(255,212,71,0.2);border-radius:10px;padding:1px 7px;margin-right:8px;}
+.live-lb-score{font-weight:bold;font-family:'Courier New',monospace;font-size:15px;}
+.live-lb-score.pos{color:#ffd447;}
+.live-lb-score.neg{color:#ff6b6b;}
+.live-lb-score.zero{color:rgba(255,255,255,0.3);}
+
+/* ── House light ── */
+.house-light{
+  font-size:9px;font-weight:bold;letter-spacing:2.5px;text-transform:uppercase;
+  font-family:'Georgia','Times New Roman',serif;
+  color:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:3px 14px;
+  margin-bottom:8px;
+  transition:color .4s ease, border-color .4s ease, box-shadow .4s ease;
+}
+.house-light.lit{
+  background:linear-gradient(90deg,#7eb8f7,#ffd447,#52d68a,#f97316,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  border-color:rgba(192,132,252,0.4);
+  box-shadow:0 0 12px rgba(192,132,252,0.35), 0 0 24px rgba(192,132,252,0.15);
+  animation:housePulse 2s ease-in-out infinite;
+}
+@keyframes housePulse{
+  0%,100%{box-shadow:0 0 10px rgba(192,132,252,0.35),0 0 20px rgba(192,132,252,0.15);}
+  50%{box-shadow:0 0 18px rgba(192,132,252,0.6),0 0 36px rgba(192,132,252,0.25);}
+}
+
+/* ── Casino Titles ── */
+.stone{font-size:8px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;border-radius:10px;padding:2px 7px;border:1px solid;margin-right:3px;white-space:nowrap;}
+.stone-kingpin   {color:#7eb8f7;border-color:rgba(126,184,247,0.35);background:rgba(126,184,247,0.1);}  /* blue   – Kingpin    */
+.stone-highroller{color:#ffd447;border-color:rgba(255,212,71,0.35); background:rgba(255,212,71,0.1);}   /* gold   – High Roller*/
+.stone-thebanker {color:#52d68a;border-color:rgba(82,214,138,0.35); background:rgba(82,214,138,0.1);}   /* green  – The Banker */
+.stone-heater    {color:#f97316;border-color:rgba(249,115,22,0.35); background:rgba(249,115,22,0.1);}   /* orange – The Heater */
+.stone-shark     {color:#c084fc;border-color:rgba(192,132,252,0.35);background:rgba(192,132,252,0.1);}  /* purple – The Shark  */
+.live-lb-row.the-house{
+  background:linear-gradient(90deg,rgba(126,184,247,0.08),rgba(255,212,71,0.08),rgba(82,214,138,0.08),rgba(249,115,22,0.08),rgba(192,132,252,0.08));
+  border:1px solid rgba(255,255,255,0.25);
+  box-shadow:0 0 16px rgba(192,132,252,0.25);
+}
+.house-label{
+  font-size:8px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;
+  background:linear-gradient(90deg,#7eb8f7,#ffd447,#52d68a,#f97316,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-right:6px;white-space:nowrap;
+}
+
 /* ── Trophy nav card ── */
 .trophy-card{
   margin-top:12px;
@@ -700,6 +782,15 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
                 <option value="18" selected>18</option>
               </select>
             </div>
+            <div style="height:6px;"></div>
+            <div class="row-setting" style="height:34px;overflow:hidden;">
+              <label>Casino Titles:</label>
+              <input type="checkbox" id="casinoTitlesToggle" style="width:18px;height:18px;accent-color:#c084fc;cursor:pointer;" onchange="toggleCasinoTitlesSetup()">
+              <span id="houseTaxCapRow" style="display:none;align-items:center;gap:6px;margin-left:8px;">
+                <span style="font-size:11px;color:rgba(255,212,71,0.55);text-transform:uppercase;letter-spacing:.8px;">Tax Cap ($)</span>
+                <input type="number" id="houseTaxCapInput" value="3" min="1" max="10" inputmode="numeric" class="select-input" style="width:52px;">
+              </span>
+            </div>
             <button class="start-btn" onclick="startGame()">Deal In</button>
             <div id="nameError">Enter at least 2 player names.</div>
             <div style="padding-bottom:32px;"></div>
@@ -720,6 +811,17 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
             <div class="rules-note">
               Each matchup is banker vs. one player — settled hole by hole.<br>
               Highest net total wins the round.
+            </div>
+            <div style="margin-top:16px;border-top:1px solid rgba(255,212,71,0.12);padding-top:12px;">
+              <div style="font-size:9px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:rgba(255,212,71,0.45);margin-bottom:8px;font-family:'Georgia',serif;">♠ Casino Titles (optional)</div>
+              <table class="rules-table">
+                <tr><td><span class="stone stone-kingpin" style="font-size:7px;padding:1px 5px;">Ace</span></td><td>Most matchup wins</td></tr>
+                <tr><td><span class="stone stone-highroller" style="font-size:7px;padding:1px 5px;">Whale</span></td><td>Highest net balance</td></tr>
+                <tr><td><span class="stone stone-thebanker" style="font-size:7px;padding:1px 5px;">Banker</span></td><td>Current banker</td></tr>
+                <tr><td><span class="stone stone-heater" style="font-size:7px;padding:1px 5px;">Heater</span></td><td>Longest win streak</td></tr>
+                <tr><td><span class="stone stone-shark" style="font-size:7px;padding:1px 5px;">Shark</span></td><td>Biggest single hole win</td></tr>
+              </table>
+              <div class="rules-note" style="margin-top:6px;">Hold all 5 titles at once to become <span style="background:linear-gradient(90deg,#7eb8f7,#ffd447,#52d68a,#f97316,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:bold;">The House</span> — every other player pays you a tax each hole you hold them all.</div>
             </div>
           </div>
 
@@ -755,13 +857,14 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
       </div>
 
       <div class="dealer-zone-row">
-        <div class="dealer-flank dealer-flank-left" id="balancesPanel">
-          <div class="flank-label">Balances</div>
-          <div id="balancesList"></div>
+        <div class="dealer-flank dealer-flank-left">
+          <div class="flank-label">Hole Value</div>
+          <div id="holeValueList"></div>
         </div>
 
         <div class="dealer-zone">
           <div class="dealer-badge">Dealer Area</div>
+          <div id="houseLight" class="house-light">⬡ THE HOUSE</div>
           <div class="dealer-card" id="dealerCard">
             <div class="dealer-name" id="dealerName"></div>
             <div class="input-lbl">Score</div>
@@ -777,9 +880,9 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
           </div>
         </div>
 
-        <div class="dealer-flank dealer-flank-right" id="carryoverPanel">
-          <div class="flank-label">Carryover</div>
-          <div id="carryoverList"></div>
+        <div class="dealer-flank dealer-flank-right">
+          <div class="flank-label">Banker Streak</div>
+          <div id="bankerStreakPanel"></div>
         </div>
       </div>
       <br>
@@ -799,6 +902,11 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
         </div>
       </div>
 
+    </div>
+
+    <div class="live-lb-card" id="liveLbCard">
+      <div class="live-lb-title">Standings</div>
+      <div id="liveLbList"></div>
     </div>
 
     <div id="scorecardModal" class="hidden modal">
@@ -909,6 +1017,9 @@ let carryovers = [];
 let playerNetTotals = [];
 let holeHistory = [];
 let lastSnapshot = null;
+let casinoTitlesMode = false;
+let houseTaxCap = 3;
+let houseConsecutive = 0;
 
 function goBack(){
   if(holeHistory.length > 0 && !confirm('Abandon this round? Scores will be lost.')) return;
@@ -932,13 +1043,16 @@ function startGame(){
   maxValue = Math.max(minValue, Number(document.getElementById('maxValue').value)||5);
   courseName = '';
   totalHoles = Number(document.getElementById('holesSelect').value)||18;
+  casinoTitlesMode = document.getElementById('casinoTitlesToggle')?.checked || false;
+  houseTaxCap = casinoTitlesMode ? Math.max(1, Number(document.getElementById('houseTaxCapInput')?.value)||3) : 3;
+  houseConsecutive = 0;
 
   document.getElementById('setupScreen').classList.add('hidden');
   document.getElementById('gameScreen').classList.remove('hidden');
 
   renderHoleHeader();
   renderTable();
-  renderCarryoverStrip();
+  renderHoleValuePanel();
   renderStandings();
   updateDisplays();
 }
@@ -953,19 +1067,6 @@ function renderHoleHeader(){
   document.getElementById('holeTotalLabel').textContent = totalHoles;
   const pct = (hole / totalHoles * 100).toFixed(1);
   document.getElementById('holeProgressFill').style.width = pct + '%';
-}
-
-function renderCarryoverStrip(){
-  const panel  = document.getElementById('carryoverPanel');
-  const list   = document.getElementById('carryoverList');
-  if(!panel || !list) return;
-  const nonBankers = playerNames.map((_,i)=>i).filter(i=>i!==bankerIdx);
-  list.innerHTML = nonBankers.map(i => {
-    const v = carryovers[i] || 0;
-    const cls = v > 0 ? 'pos' : 'zero';
-    const label = v > 0 ? '+$'+v : '$0';
-    return `<div class="flank-row"><span class="flank-name">${esc(playerNames[i])}</span><span class="flank-val ${cls}">${label}</span></div>`;
-  }).join('');
 }
 
 function renderTable(){
@@ -1020,6 +1121,7 @@ function stepWager(idx, dir){
   if(next === cur) return;
   playerWagersBase[idx] = next;
   _refreshWagerDisplay(idx);
+  renderHoleValuePanel();
 }
 
 function adjustScore(idx, delta){
@@ -1045,6 +1147,7 @@ function updateDisplays(){
 function applyDouble(idx){
   let nonBankers = playerNames.map((_,i)=>i).filter(i=>i!==bankerIdx);
   nonBankers.forEach(i => _refreshWagerDisplay(i));
+  renderHoleValuePanel();
 }
 
 function _refreshWagerDisplay(i){
@@ -1098,6 +1201,21 @@ function resolveHole(){
 
   let allTied = matchups.every(m => m.result === 'tie');
 
+  if(casinoTitlesMode && holeHistory.length > 0){
+    const ct = computeCasinoTitles().titles;
+    const houseIdx = ct.findIndex(t => t.kingpin && t.highroller && t.thebanker && t.heater && t.shark);
+    if(houseIdx >= 0){
+      houseConsecutive = Math.min(houseConsecutive + 1, houseTaxCap);
+      const tax = houseConsecutive;
+      nonBankers.forEach(i => {
+        playerNetTotals[i] -= tax;
+        playerNetTotals[houseIdx] += tax;
+      });
+    } else {
+      houseConsecutive = 0;
+    }
+  }
+
   let nextBankerIdx = bankerIdx;
   if(!allTied){
     let beaters = matchups
@@ -1135,6 +1253,7 @@ function resolveHole(){
 
   renderHoleHeader();
   renderTable();
+  renderHoleValuePanel();
   renderCarryoverStrip();
   updateDisplays();
   document.getElementById('undoBtn').classList.remove('hidden');
@@ -1151,25 +1270,201 @@ function undoHole(){
   document.getElementById('undoBtn').classList.add('hidden');
   renderHoleHeader();
   renderTable();
-  renderCarryoverStrip();
   renderStandings();
   updateDisplays();
   if(!document.getElementById('scorecardModal').classList.contains('hidden')) renderScorecard();
 }
 
 function renderStandings(){
-  const list = document.getElementById('balancesList');
-  if(list){
-    list.innerHTML = playerNames.map((_, i) => {
-      const v = playerNetTotals[i];
-      const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : 'zero';
-      const label = v > 0 ? '+$'+v : '$'+v;
-      const isDealer = i === bankerIdx;
-      return `<div class="flank-row${isDealer ? ' flank-dealer' : ''}">
-        <span class="flank-name">${esc(playerNames[i])}</span>
-        <span class="flank-val ${cls}">${label}</span>
-      </div>`;
-    }).join('');
+  renderLiveLeaderboard();
+  renderBankerStreakPanel();
+}
+
+function renderHoleValuePanel(){
+  const el = document.getElementById('holeValueList');
+  if(!el) return;
+  const nonBankers = playerNames.map((_,i)=>i).filter(i=>i!==bankerIdx);
+  el.innerHTML = nonBankers.map(i => {
+    const base = playerWagersBase[i] || minValue;
+    const carry = carryovers[i] || 0;
+    const bankerChecked = document.getElementById('dealerDouble')?.checked || false;
+    const playerChecked = document.getElementById('pdouble-'+i)?.checked || false;
+    const doublesCount = (bankerChecked ? 1 : 0) + (playerChecked ? 1 : 0);
+    const effective = base * Math.pow(2, doublesCount) + carry;
+    const cls = carry > 0 ? 'pos' : 'zero';
+    return `<div class="flank-row">
+      <span class="flank-name">${esc(playerNames[i])}</span>
+      <span class="flank-val ${cls}">$${effective}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderBankerStreakPanel(){
+  const el = document.getElementById('bankerStreakPanel');
+  if(!el) return;
+  let streak = 0;
+  for(let i = holeHistory.length - 1; i >= 0; i--){
+    if(holeHistory[i].nextBankerIdx === bankerIdx) streak++;
+    else break;
+  }
+  const cls = streak >= 3 ? 'pos' : 'zero';
+  const label = streak === 0 ? 'New' : streak === 1 ? '1 hole' : `${streak} holes`;
+  el.innerHTML = `<div class="flank-row" style="justify-content:center;">
+    <span class="flank-val ${cls}" style="font-size:13px;">${label}</span>
+  </div>`;
+}
+
+function computeCasinoTitlesAtHole(upToHoleNum){
+  const savedHistory = holeHistory;
+  const savedNetTotals = playerNetTotals;
+  const savedBankerIdx = bankerIdx;
+  // Snapshot state up to this hole
+  const slicedHistory = holeHistory.filter(h => h.holeNum <= upToHoleNum);
+  const lastHole = slicedHistory[slicedHistory.length - 1];
+  const snapshotBankerIdx = lastHole ? lastHole.nextBankerIdx : bankerIdx;
+  const snapshotNets = new Array(playerNames.length).fill(0);
+  slicedHistory.forEach(h => {
+    h.matchups.forEach(m => {
+      if(m.result === 'banker'){ snapshotNets[h.bankerIdx] += m.amount; snapshotNets[m.playerIdx] -= m.amount; }
+      else if(m.result === 'player'){ snapshotNets[m.playerIdx] += m.amount; snapshotNets[h.bankerIdx] -= m.amount; }
+    });
+  });
+  // Temporarily swap globals
+  holeHistory = slicedHistory;
+  playerNetTotals = snapshotNets;
+  bankerIdx = snapshotBankerIdx;
+  const result = computeCasinoTitles().titles;
+  holeHistory = savedHistory;
+  playerNetTotals = savedNetTotals;
+  bankerIdx = savedBankerIdx;
+  return result;
+}
+
+function computeCasinoTitles(){
+  const n = playerNames.length;
+  const titles = playerNames.map(() => ({kingpin:false, highroller:false, thebanker:false, heater:false, shark:false}));
+
+  // Kingpin (blue) — most individual matchup wins this round, sole leader, ≥1
+  const matchupWins = new Array(n).fill(0);
+  holeHistory.forEach(h => {
+    h.matchups.forEach(m => {
+      if(m.result === 'player') matchupWins[m.playerIdx]++;
+      else if(m.result === 'banker') matchupWins[h.bankerIdx]++;
+    });
+  });
+  const maxWins = Math.max(...matchupWins);
+  if(maxWins > 0){
+    const leaders = matchupWins.map((w,i) => w===maxWins ? i : -1).filter(i=>i>=0);
+    if(leaders.length === 1) titles[leaders[0]].kingpin = true;
+  }
+
+  // High Roller (gold) — highest net balance, sole leader, > $0
+  const maxNet = Math.max(...playerNetTotals);
+  if(maxNet > 0){
+    const leaders = playerNetTotals.map((t,i) => t===maxNet ? i : -1).filter(i=>i>=0);
+    if(leaders.length === 1) titles[leaders[0]].highroller = true;
+  }
+
+  // The Banker (green) — current banker
+  titles[bankerIdx].thebanker = true;
+
+  // The Heater (orange) — longest active streak of consecutive profitable holes (any role), ≥2
+  // Ties are neutral — they don't extend the streak but don't break it either
+  const streaks = new Array(n).fill(0);
+  for(let pi = 0; pi < n; pi++){
+    let s = 0;
+    for(let hi = holeHistory.length - 1; hi >= 0; hi--){
+      const h = holeHistory[hi];
+      let profitable = false;
+      let tied = false;
+      if(h.bankerIdx === pi){
+        profitable = h.matchups.some(m => m.result === 'banker');
+        tied = h.matchups.every(m => m.result === 'tie');
+      } else {
+        const m = h.matchups.find(m => m.playerIdx === pi);
+        if(m && m.result === 'player') profitable = true;
+        if(m && m.result === 'tie') tied = true;
+      }
+      if(profitable) s++;
+      else if(tied) continue;
+      else break;
+    }
+    streaks[pi] = s;
+  }
+  const maxStreak = Math.max(...streaks);
+  if(maxStreak >= 2){
+    const leaders = streaks.map((s,i) => s===maxStreak ? i : -1).filter(i=>i>=0);
+    if(leaders.length === 1) titles[leaders[0]].heater = true;
+  }
+
+  // The Shark (purple) — largest single-hole payday this round, sole leader
+  const bigPayday = new Array(n).fill(0);
+  holeHistory.forEach(h => {
+    h.matchups.forEach(m => {
+      if(m.result === 'player') bigPayday[m.playerIdx] = Math.max(bigPayday[m.playerIdx], m.amount);
+      else if(m.result === 'banker') bigPayday[h.bankerIdx] = Math.max(bigPayday[h.bankerIdx], m.amount);
+    });
+  });
+  const maxPayday = Math.max(...bigPayday);
+  if(maxPayday > 0){
+    const leaders = bigPayday.map((v,i) => v===maxPayday ? i : -1).filter(i=>i>=0);
+    if(leaders.length === 1) titles[leaders[0]].shark = true;
+  }
+
+  return {titles, matchupWins, playerNetTotals: [...playerNetTotals], streaks, bigPayday};
+}
+
+function toggleCasinoTitlesSetup(){
+  const enabled = document.getElementById('casinoTitlesToggle').checked;
+  const row = document.getElementById('houseTaxCapRow');
+  row.style.display = enabled ? 'flex' : 'none';
+}
+
+function renderLiveLeaderboard(){
+  const list = document.getElementById('liveLbList');
+  if(!list) return;
+  const titleEl = document.querySelector('.live-lb-title');
+  if(titleEl) titleEl.innerHTML = casinoTitlesMode
+    ? `Standings <span class="stone stone-shark" style="font-size:7px;vertical-align:middle;">Casino</span>`
+    : 'Standings';
+  const maxNet = Math.max(...playerNetTotals);
+  const ctResult = casinoTitlesMode && holeHistory.length > 0 ? computeCasinoTitles() : null;
+  const titles = ctResult ? ctResult.titles : null;
+  const sorted = playerNames
+    .map((name, i) => ({name, i, net: playerNetTotals[i]}))
+    .sort((a, b) => b.net - a.net);
+
+  list.innerHTML = sorted.map(p => {
+    const isLeader = p.net === maxNet && p.net > 0;
+    const isBanker = p.i === bankerIdx;
+    const scoreCls = p.net > 0 ? 'pos' : p.net < 0 ? 'neg' : 'zero';
+    const sign = p.net > 0 ? '+' : '';
+    const t = titles ? titles[p.i] : null;
+    const hasAll = t && t.kingpin && t.highroller && t.thebanker && t.heater && t.shark;
+    const rowCls = hasAll ? 'the-house' : isLeader ? 'is-leader' : isBanker ? 'is-banker' : '';
+
+    const badgeHtml = t ? [
+      t.kingpin    ? `<span class="stone stone-kingpin">Ace <span style="opacity:0.7">${ctResult.matchupWins[p.i]}</span></span>` : '',
+      t.highroller ? `<span class="stone stone-highroller">Whale</span>` : '',
+      t.thebanker  ? `<span class="stone stone-thebanker">Banker</span>` : '',
+      t.heater     ? `<span class="stone stone-heater">Heater <span style="opacity:0.7">${ctResult.streaks[p.i]}↑</span></span>` : '',
+      t.shark      ? `<span class="stone stone-shark">Shark <span style="opacity:0.7">$${ctResult.bigPayday[p.i]}</span></span>` : '',
+    ].join('') : '';
+
+    return `<div class="live-lb-row ${rowCls}">
+      <span class="live-lb-name${isLeader && !hasAll ? ' leader-name' : ''}">${esc(p.name)}</span>
+      <span style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;margin:0 6px;">${badgeHtml}</span>
+      <span class="live-lb-score ${scoreCls}">${sign}$${p.net}</span>
+    </div>`;
+  }).join('');
+
+  const houseLight = document.getElementById('houseLight');
+  if(houseLight){
+    houseLight.classList.toggle('hidden', !casinoTitlesMode);
+    if(casinoTitlesMode && titles){
+      const anyHouse = sorted.some(p => { const t = titles[p.i]; return t && t.kingpin && t.highroller && t.thebanker && t.heater && t.shark; });
+      houseLight.classList.toggle('lit', anyHouse);
+    }
   }
 }
 
@@ -1188,7 +1483,7 @@ function renderScorecard(){
   let tbody = document.getElementById('scorecardBody');
   thead.innerHTML = '<th>#</th>'
     + playerNames.map(n=>`<th>${esc(n)}</th>`).join('')
-    + '<th>Banker</th><th>Result</th>';
+    + `<th>Result</th>${casinoTitlesMode ? '<th>Titles</th>' : ''}`;
 
   let histMap = {};
   holeHistory.forEach(h=>{ histMap[h.holeNum] = h; });
@@ -1215,7 +1510,6 @@ function renderScorecard(){
           row += `<td class="${cls}">${h.scores[i]}${dBadge}${wagerLine}</td>`;
         }
       }
-      row += `<td class="sc-banker-cell">${esc(playerNames[h.bankerIdx])}</td>`;
       let parts = [];
       if(h.allTied){
         parts.push('Carryover');
@@ -1225,11 +1519,28 @@ function renderScorecard(){
           else if(m.result==='player') parts.push(`<span class="sc-pos">${esc(playerNames[m.playerIdx])} +$${m.amount}</span>`);
         });
       }
-      row += `<td class="sc-result-col">${parts.join('<br>')}</td></tr>`;
+      row += `<td class="sc-result-col">${parts.join('<br>')}</td>`;
+      if(casinoTitlesMode){
+        const ct = computeCasinoTitlesAtHole(h.holeNum);
+        const dots = playerNames.map((name, i) => {
+          const t = ct[i];
+          const held = [
+            t.kingpin    ? `<span class="stone stone-kingpin"   style="padding:1px 4px;font-size:7px;">KP</span>` : '',
+            t.highroller ? `<span class="stone stone-highroller"style="padding:1px 4px;font-size:7px;">HR</span>` : '',
+            t.thebanker  ? `<span class="stone stone-thebanker" style="padding:1px 4px;font-size:7px;">BK</span>` : '',
+            t.heater     ? `<span class="stone stone-heater"    style="padding:1px 4px;font-size:7px;">HT</span>` : '',
+            t.shark      ? `<span class="stone stone-shark"     style="padding:1px 4px;font-size:7px;">SH</span>` : '',
+          ].filter(Boolean);
+          if(!held.length) return '';
+          return `<div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:1px;">${esc(name)}: ${held.join('')}</div>`;
+        }).join('');
+        row += `<td style="padding:3px 4px;min-width:60px;">${dots||'<span style="color:rgba(255,255,255,0.2);font-size:10px;">—</span>'}</td>`;
+      }
+      row += `</tr>`;
       rows += row;
     } else {
       let emptyCells = playerNames.map(()=>'<td>–</td>').join('');
-      rows += `<tr style="opacity:0.35"><td>${n}</td>${emptyCells}<td>–</td><td>–</td></tr>`;
+      rows += `<tr style="opacity:0.35"><td>${n}</td>${emptyCells}<td>–</td>${casinoTitlesMode?'<td>–</td>':''}</tr>`;
     }
   }
 
@@ -1240,7 +1551,7 @@ function renderScorecard(){
     let cls = v > 0 ? 'sc-pos' : v < 0 ? 'sc-neg' : '';
     totRow += `<td class="${cls}">${sign}$${v}</td>`;
   }
-  totRow += '<td colspan="2"></td></tr>';
+  totRow += `<td${casinoTitlesMode?' colspan="2"':''}></td></tr>`;
   tbody.innerHTML = rows + totRow;
 }
 
@@ -1253,7 +1564,7 @@ function saveGameResult(){
       course: '',
       date: new Date(document.getElementById('roundDate').value+'T12:00:00').toISOString(),
       players: [...playerNames],
-      minValue, maxValue,
+      minValue, maxValue, casinoTitlesMode, houseTaxCap,
       playerNetTotals: [...playerNetTotals],
       holeHistory: holeHistory.map(h=>({...h, scores:[...h.scores], matchups:h.matchups.map(m=>({...m}))}))
     });
@@ -1446,22 +1757,22 @@ function renderInsightsStats(){
   let nb_wagerSum=0, nb_doubles=0, nb_doubleWins=0;
 
   // ── Banker stats ──
-  let bk_holes=0, bk_wins=0, bk_blowups=0;
+  let bk_holes=0, bk_wins=0, bk_blowups=0, bk_doubles=0, bk_doubleWins=0;
 
   rounds.forEach(r=>{
     const playerIdx = r.players.indexOf(name);
     if(!r.holeHistory) return;
     r.holeHistory.forEach(h=>{
       if(h.bankerIdx === playerIdx){
-        // This player was banker this hole
         bk_holes++;
         const results = h.matchups.map(m=>m.result);
         const bankerWonAll = results.every(res=>res==='banker');
         const bankerLostAll = results.every(res=>res==='player');
         if(bankerWonAll) bk_wins++;
         if(bankerLostAll) bk_blowups++;
+        const didDouble = h.matchups.length > 0 && h.matchups[0].bankerDoubled;
+        if(didDouble){ bk_doubles++; if(bankerWonAll) bk_doubleWins++; }
       } else {
-        // This player was a non-banker this hole
         const m = h.matchups.find(m=>m.playerIdx===playerIdx);
         if(!m) return;
         nb_holes++;
@@ -1481,7 +1792,11 @@ function renderInsightsStats(){
   };
 
   const avgWager = nb_holes>0 ? '$'+(nb_wagerSum/nb_holes).toFixed(2).replace(/\.00$/,'') : '—';
-  const doubleWinRate = nb_doubles>0 ? pct(nb_doubleWins,nb_doubles) : '—';
+  const totalDoubles = nb_doubles + bk_doubles;
+  const totalDoubleWins = nb_doubleWins + bk_doubleWins;
+  const totalDoubleHoles = nb_holes + bk_holes;
+  const doubleRate = pct(totalDoubles, totalDoubleHoles);
+  const doubleWinRate = totalDoubles>0 ? pct(totalDoubleWins, totalDoubles) : '—';
   const bkWinRate = bk_holes>0 ? pct(bk_wins,bk_holes) : '—';
   const bkBlowupRate = bk_holes>0 ? pct(bk_blowups,bk_holes) : '—';
 
@@ -1513,11 +1828,11 @@ function renderInsightsStats(){
     </div>
 
     <div class="stn-table-wrap">
-      <div class="stn-table-wrap-title">Doubling (${nb_doubles} holes doubled)</div>
+      <div class="stn-table-wrap-title">Doubling — All Roles (${totalDoubles} doubles called)</div>
       <table class="stn-table">
         <thead><tr><th class="num">Double Rate</th><th class="num">Win Rate When Doubled</th></tr></thead>
         <tbody><tr>
-          <td class="num">${pct(nb_doubles,nb_holes)}</td>
+          <td class="num">${doubleRate}</td>
           <td class="num">${doubleWinRate}</td>
         </tr></tbody>
       </table>
