@@ -20,7 +20,7 @@ body{font-family:'Helvetica Neue',Arial,sans-serif;background:#080f0a;margin:0;p
 .tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:bold;cursor:pointer;color:rgba(255,212,71,0.35);border-bottom:3px solid transparent;transition:color .15s,border-color .15s;-webkit-user-select:none;letter-spacing:2px;text-transform:uppercase;font-family:'Georgia','Times New Roman',serif;}
 .tab.active{color:#ffd447;border-bottom-color:#8B6914;}
 .scroll-area{flex:1;overflow-y:auto;padding:16px 14px 40px;}
-.round-card{background:repeating-linear-gradient(45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),repeating-linear-gradient(-45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),#0e1a12;border:1px solid rgba(184,150,46,0.25);border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+.round-card{background:repeating-linear-gradient(45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),repeating-linear-gradient(-45deg,rgba(255,212,71,0.03) 0,rgba(255,212,71,0.03) 1px,transparent 1px,transparent 10px),#0e1a12;border:2px solid #8B6914;border-radius:10px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
 .round-card-header{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 14px 12px;cursor:pointer;gap:10px;}
 .round-card-header:active{background:rgba(255,212,71,0.03);}
 .rch-left{flex:1;}
@@ -58,7 +58,7 @@ table.sc-table td{border:1px solid rgba(255,212,71,0.08);padding:4px 3px;text-al
 .settle-to{color:#5ee87b;font-weight:bold;}
 .settle-amount{margin-left:auto;font-weight:bold;color:#ffd447;}
 .settle-all-square{font-size:13px;color:rgba(255,255,255,0.3);text-align:center;padding:4px 0;}
-.match-summary{font-size:13px;color:rgba(255,255,255,0.72);line-height:1.75;background:rgba(0,0,0,0.25);border-radius:7px;padding:11px 13px;border-left:3px solid rgba(184,150,46,0.4);}
+.match-summary{display:none;}
 .tag-good{color:#2ecc71;font-weight:bold;}
 .tag-bad{color:#ff4d4d;font-weight:bold;}
 .stn-panel{
@@ -119,6 +119,7 @@ if('serviceWorker' in navigator){
 let activeTab = 'standings';
 
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtScore(s){ return s === 0 ? 'E' : s > 0 ? '+'+s : ''+s; }
 
 function computeTitlesAtHole(r, upToHoleNum){
   const n = r.players.length;
@@ -259,102 +260,6 @@ function renderStandingsPanel(rows){
   </div>`;
 }
 
-function generateMatchSummary(r){
-  if(!r.holeHistory || !r.holeHistory.length) return null;
-  const holes = r.holeHistory;
-  const nets = r.playerNetTotals || r.players.map(()=>0);
-  const numHoles = holes.length;
-
-  // Winner(s)
-  const maxNet = Math.max(...nets);
-  const minNet = Math.min(...nets);
-  const winnerIdxs = nets.map((t,i)=>t===maxNet?i:-1).filter(i=>i>=0);
-  const winnerNames = winnerIdxs.map(i=>r.players[i]).join(' & ');
-
-  // Banker frequency
-  const bankerCount = {};
-  r.players.forEach((_,i)=>{ bankerCount[i]=0; });
-  holes.forEach(h=>{ bankerCount[h.bankerIdx]=(bankerCount[h.bankerIdx]||0)+1; });
-  const topBankerIdx = Object.keys(bankerCount).reduce((a,b)=>bankerCount[a]>bankerCount[b]?a:b);
-  const topBankerName = r.players[+topBankerIdx];
-  const topBankerHoles = bankerCount[+topBankerIdx];
-
-  // Banker wins / losses when that player was banker
-  let bankerWins = 0, bankerLosses = 0;
-  holes.forEach(h=>{
-    h.matchups.forEach(m=>{
-      if(m.result==='banker') bankerWins++;
-      else if(m.result==='player') bankerLosses++;
-    });
-  });
-
-  // Doubles used
-  let totalDoubles = 0;
-  holes.forEach(h=>{
-    h.matchups.forEach(m=>{ if(m.doubled||m.bankerDoubled) totalDoubles++; });
-  });
-
-  // Carryover holes
-  const carryovers = holes.filter(h=>h.allTied).length;
-
-  // Biggest single swing hole (highest wager resolved, not tied)
-  let biggestHole = null, biggestAmt = 0;
-  holes.forEach(h=>{
-    if(h.allTied) return;
-    h.matchups.forEach(m=>{
-      if(m.result!=='tie' && m.amount > biggestAmt){
-        biggestAmt = m.amount;
-        biggestHole = h;
-      }
-    });
-  });
-
-  // Build sentences
-  const sentences = [];
-
-  // S1: Overview
-  const course = r.course ? ` at ${r.course}` : '';
-  const wageRange = `$${r.minValue??1}–$${r.maxValue??5}`;
-  sentences.push(`${r.players.join(', ')} played a ${numHoles}-hole Banker game${course} with wagers ranging ${wageRange}.`);
-
-  // S2: Winner
-  if(maxNet > 0){
-    const margin = maxNet - (nets.filter((_,i)=>!winnerIdxs.includes(i)).reduce((a,b)=>Math.max(a,b),-Infinity));
-    sentences.push(`${winnerNames} came out on top, finishing +$${maxNet}${margin>0?' ahead of the field':''}.`);
-  } else {
-    sentences.push(`The round ended all square — no player finished in the black.`);
-  }
-
-  // S3: Banker dominance or struggle
-  const bankerRate = bankerWins / (bankerWins + bankerLosses || 1);
-  if(bankerWins + bankerLosses > 0){
-    if(bankerRate >= 0.6){
-      sentences.push(`The banker position was a strong advantage today, winning ${bankerWins} of ${bankerWins+bankerLosses} matchups.`);
-    } else if(bankerRate <= 0.4){
-      sentences.push(`Players gained the upper hand against the banker, winning ${bankerLosses} of ${bankerWins+bankerLosses} matchups.`);
-    } else {
-      sentences.push(`Banker matchups were closely contested — ${bankerWins} banker wins to ${bankerLosses} player wins across the round.`);
-    }
-  }
-
-  // S4: Doubles / carryovers / biggest hole
-  const extras = [];
-  if(totalDoubles > 0) extras.push(`${totalDoubles} double${totalDoubles>1?'s':''} were called`);
-  if(carryovers > 0) extras.push(`${carryovers} hole${carryovers>1?'s':''} carried over`);
-  if(extras.length) sentences.push(extras.join(' and ').charAt(0).toUpperCase() + extras.join(' and ').slice(1) + ', keeping the pressure on throughout.');
-
-  // S5: Biggest swing
-  if(biggestHole){
-    const bigM = biggestHole.matchups.find(m=>m.amount===biggestAmt && m.result!=='tie');
-    if(bigM){
-      const winner = bigM.result==='banker' ? r.players[biggestHole.bankerIdx] : r.players[bigM.playerIdx];
-      sentences.push(`The biggest swing came on hole ${biggestHole.holeNum}, where ${winner} won a $${biggestAmt} matchup${bigM.doubled||bigM.bankerDoubled?' with a double on the line':''}.`);
-    }
-  }
-
-  return sentences.join(' ');
-}
-
 function renderBankerCard(r){
   const date = new Date(r.date).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
   const nets = r.playerNetTotals || r.players.map(()=>0);
@@ -395,14 +300,14 @@ function renderBankerCard(r){
       for(let i=0; i<r.players.length; i++){
         if(i === h.bankerIdx){
           const dBadge = bankerDidDouble ? `<span class="sc-d">D</span>` : '';
-          cells += `<td class="sc-banker-cell">${h.scores[i]}${dBadge}</td>`;
+          cells += `<td class="sc-banker-cell">${fmtScore(h.scores[i])}${dBadge}</td>`;
         } else {
           const m = matchupMap[i];
           const anyDoubled = m && (m.doubled || m.bankerDoubled);
           const dBadge = (m && m.doubled) ? `<span class="sc-d">D</span>` : '';
           const wagerLine = m ? `<span class="sc-wager${anyDoubled?' doubled':''}">$${m.holeValue}</span>` : '';
           const cls = winners.has(i) ? 'sc-pos' : '';
-          cells += `<td class="${cls}">${h.scores[i]}${dBadge}${wagerLine}</td>`;
+          cells += `<td class="${cls}">${fmtScore(h.scores[i])}${dBadge}${wagerLine}</td>`;
         }
       }
       const parts = h.allTied ? ['Carryover'] : h.matchups.filter(m=>m.result!=='tie').map(m=>
@@ -459,7 +364,6 @@ function renderBankerCard(r){
           </table>
         </div>
       </div>` : ''}
-      ${(()=>{ const s=generateMatchSummary(r); return s ? `<div class="detail-section"><h5>Match Summary</h5><div class="match-summary">${s}</div></div>` : ''; })()}
     </div>
   </div>`;
 }

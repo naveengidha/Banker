@@ -188,7 +188,7 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
   border:1px solid rgba(255,255,255,0.1);
   border-radius:20px;
   padding:3px 14px;
-  margin-bottom:8px;
+  margin-top:8px;margin-bottom:8px;
   transition:color .4s ease, border-color .4s ease, box-shadow .4s ease;
 }
 .house-light.lit{
@@ -327,7 +327,7 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 .dealer-zone-row{
   display:flex;align-items:flex-start;justify-content:center;
   gap:16px;
-  padding:10px 8px 0;
+  padding:10px 14px 0;
   position:relative;z-index:1;
 }
 .dealer-zone-row .dealer-zone{
@@ -335,7 +335,7 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
   flex-shrink:0;
 }
 .dealer-flank{
-  flex:1;min-width:0;max-width:100px;
+  flex:1;min-width:0;
   padding:8px 8px 10px;
   display:flex;flex-direction:column;align-items:center;
   border:1px dashed rgba(255,212,71,0.3);
@@ -388,7 +388,7 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 .flank-title-holder{
   font-size:9px;font-family:'Courier New',monospace;
   color:rgba(255,255,255,0.6);
-  text-align:center;
+  text-align:center;width:100%;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   max-width:86px;
 }
@@ -400,12 +400,6 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 .flank-balance-carry{
   font-size:8px;font-family:'Courier New',monospace;
   color:rgba(255,212,71,0.75);
-}
-.dealer-badge{
-  font-size:8px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;
-  color:rgba(255,212,71,0.4);margin-bottom:10px;
-  border:1px solid rgba(255,212,71,0.2);
-  border-radius:20px;padding:2px 12px;
 }
 .dealer-card{
   background:rgba(0,0,0,0.55);
@@ -482,13 +476,13 @@ input[type="date"].course-input{-webkit-appearance:none;appearance:none;}
 
 /* ── Players zone ── */
 .players-zone{
-  padding:16px 10px 4px;
-  display:flex;flex-wrap:wrap;gap:12px;justify-content:center;
+  padding:16px 14px 4px;
+  display:flex;flex-wrap:wrap;gap:32px;justify-content:center;
   position:relative;z-index:1;
 }
 .player-col{
   display:flex;flex-direction:column;align-items:center;
-  flex:1;min-width:100px;max-width:140px;
+  flex:1 1 0;min-width:0;max-width:120px;
 }
 .player-card{
   display:flex;flex-direction:column;align-items:center;gap:0;
@@ -852,14 +846,13 @@ td{font-family:'Courier New',monospace;color:rgba(255,255,255,0.75);}
         </div>
 
         <div class="dealer-zone">
-          <div class="dealer-badge">Dealer Area</div>
           <div id="houseLight" class="house-light">⬡ THE HOUSE</div>
           <div class="dealer-card" id="dealerCard">
             <div class="dealer-name" id="dealerName"></div>
             <div class="input-lbl">Score</div>
             <div class="stepper">
               <button class="step-btn" id="dealerMinus" onclick="adjustScore(-1,-1)">−</button>
-              <span class="step-val" id="dealerScoreVal">4</span>
+              <span class="step-val" id="dealerScoreVal">E</span>
               <button class="step-btn" id="dealerPlus" onclick="adjustScore(-1,1)">+</button>
             </div>
             <label class="double-label" style="margin-top:8px;">
@@ -1056,10 +1049,10 @@ function renderHoleHeader(){
 function renderTable(){
   playerWagers = playerNames.map((_,i) => i === bankerIdx ? 0 : minValue);
   playerWagersBase = [...playerWagers];
-  playerScores = playerNames.map(() => 4);
+  playerScores = playerNames.map(() => 0);
 
   document.getElementById('dealerName').textContent = playerNames[bankerIdx];
-  document.getElementById('dealerScoreVal').textContent = playerScores[bankerIdx];
+  document.getElementById('dealerScoreVal').textContent = fmtScore(playerScores[bankerIdx]);
   document.getElementById('dealerDouble').checked = false;
 
   let nonBankers = playerNames.map((_,i)=>i).filter(i=>i!==bankerIdx);
@@ -1071,7 +1064,7 @@ function renderTable(){
           <div class="input-lbl">Score</div>
           <div class="stepper">
             <button class="step-btn" onclick="adjustScore(${i},-1)">−</button>
-            <span class="step-val" id="pscore-${i}">${playerScores[i]}</span>
+            <span class="step-val" id="pscore-${i}">${fmtScore(playerScores[i])}</span>
             <button class="step-btn" onclick="adjustScore(${i},1)">+</button>
           </div>
         </div>
@@ -1108,14 +1101,16 @@ function stepWager(idx, dir){
   renderDealerFlanks();
 }
 
+function fmtScore(s){ return s === 0 ? 'E' : s > 0 ? '+'+s : ''+s; }
+
 function adjustScore(idx, delta){
   let realIdx = idx === -1 ? bankerIdx : idx;
-  playerScores[realIdx] = Math.max(1, playerScores[realIdx] + delta);
+  playerScores[realIdx] = Math.max(-10, Math.min(10, playerScores[realIdx] + delta));
   if(idx === -1){
-    document.getElementById('dealerScoreVal').textContent = playerScores[bankerIdx];
+    document.getElementById('dealerScoreVal').textContent = fmtScore(playerScores[bankerIdx]);
   } else {
     let el = document.getElementById('pscore-'+idx);
-    if(el) el.textContent = playerScores[idx];
+    if(el) el.textContent = fmtScore(playerScores[idx]);
   }
 }
 
@@ -1512,13 +1507,13 @@ function renderScorecard(){
         let cls = winners.has(i) ? 'sc-pos' : i===h.bankerIdx ? 'sc-banker-cell' : '';
         if(i === h.bankerIdx){
           let dBadge = bankerDidDouble ? `<span class="sc-d">D</span>` : '';
-          row += `<td class="${cls}">${h.scores[i]}${dBadge}</td>`;
+          row += `<td class="${cls}">${fmtScore(h.scores[i])}${dBadge}</td>`;
         } else {
           let m = matchupMap[i];
           let anyDoubled = m && (m.doubled || m.bankerDoubled);
           let dBadge = (m && m.doubled) ? `<span class="sc-d">D</span>` : '';
           let wagerLine = m ? `<span class="sc-wager${anyDoubled?' doubled':''}">$${m.holeValue}</span>` : '';
-          row += `<td class="${cls}">${h.scores[i]}${dBadge}${wagerLine}</td>`;
+          row += `<td class="${cls}">${fmtScore(h.scores[i])}${dBadge}${wagerLine}</td>`;
         }
       }
       let parts = [];
@@ -1605,13 +1600,13 @@ function endGame(){
       let cls = winners.has(p) ? 'sc-pos' : p===h.bankerIdx ? 'sc-banker-cell' : '';
       if(p === h.bankerIdx){
         let dBadge = bankerDidDouble ? `<span class="sc-d">D</span>` : '';
-        row += `<td class="${cls}">${h.scores[p]}${dBadge}</td>`;
+        row += `<td class="${cls}">${fmtScore(h.scores[p])}${dBadge}</td>`;
       } else {
         let m = matchupMap[p];
         let anyDoubled = m && (m.doubled || m.bankerDoubled);
         let dBadge = (m && m.doubled) ? `<span class="sc-d">D</span>` : '';
         let wagerLine = m ? `<span class="sc-wager${anyDoubled?' doubled':''}">$${m.holeValue}</span>` : '';
-        row += `<td class="${cls}">${h.scores[p]}${dBadge}${wagerLine}</td>`;
+        row += `<td class="${cls}">${fmtScore(h.scores[p])}${dBadge}${wagerLine}</td>`;
       }
     }
     let resultParts = [];
@@ -1787,6 +1782,10 @@ function renderInsightsStats(){
   // ── Banker stats ──
   let bk_holes=0, bk_wins=0, bk_blowups=0, bk_doubles=0, bk_doubleWins=0;
 
+  // ── Scoring stats (par-relative) ──
+  let sc_holes=0, sc_sum=0, sc_eagles=0, sc_birdies=0, sc_pars=0, sc_bogeys=0, sc_doubles_over=0;
+  let sc_best=null, sc_worst=null;
+
   rounds.forEach(r=>{
     const playerIdx = r.players.indexOf(name);
     if(!r.holeHistory) return;
@@ -1810,6 +1809,19 @@ function renderInsightsStats(){
         else nb_losses++;
         if(m.doubled){ nb_doubles++; if(m.result==='player') nb_doubleWins++; }
       }
+      // Score tracking — only count if scores are available and in range
+      if(h.scores && h.scores[playerIdx] !== undefined){
+        const s = h.scores[playerIdx];
+        sc_holes++;
+        sc_sum += s;
+        if(s <= -2)      sc_eagles++;
+        else if(s === -1) sc_birdies++;
+        else if(s === 0)  sc_pars++;
+        else if(s === 1)  sc_bogeys++;
+        else              sc_doubles_over++;
+        if(sc_best === null || s < sc_best) sc_best = s;
+        if(sc_worst === null || s > sc_worst) sc_worst = s;
+      }
     });
   });
 
@@ -1828,10 +1840,310 @@ function renderInsightsStats(){
   const bkWinRate = bk_holes>0 ? pct(bk_wins,bk_holes) : '—';
   const bkBlowupRate = bk_holes>0 ? pct(bk_blowups,bk_holes) : '—';
 
+  // ── Scoring panel ──
+  const sc_avg = sc_holes > 0 ? sc_sum / sc_holes : null;
+  const sc_avgFmt = sc_avg === null ? '—' : (sc_avg === 0 ? 'E' : (sc_avg > 0 ? '+' : '') + sc_avg.toFixed(1));
+  const sc_avgCls = sc_avg === null ? '' : sc_avg < 0 ? 'stn-pos' : sc_avg > 0 ? 'stn-neg' : '';
+  const scoringHTML = sc_holes > 0 ? `
+  <div class="stn-panel">
+    <div class="stn-panel-title">Scoring</div>
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">Average Score to Par — ${sc_holes} holes</div>
+      <table class="stn-table">
+        <thead><tr><th class="num">Avg / Hole</th><th class="num">Best</th><th class="num">Worst</th></tr></thead>
+        <tbody><tr>
+          <td class="num ${sc_avgCls}">${sc_avgFmt}</td>
+          <td class="num stn-pos">${sc_best !== null ? fmtScore(sc_best) : '—'}</td>
+          <td class="num stn-neg">${sc_worst !== null ? fmtScore(sc_worst) : '—'}</td>
+        </tr></tbody>
+      </table>
+    </div>
+    <div class="stn-table-wrap">
+      <div class="stn-table-wrap-title">Score Distribution</div>
+      <table class="stn-table">
+        <thead><tr><th class="num">Eagle+</th><th class="num">Birdie</th><th class="num">Par</th><th class="num">Bogey</th><th class="num">2+</th></tr></thead>
+        <tbody><tr>
+          <td class="num ${sc_eagles>0?'stn-pos':''}">${sc_holes>0?pct(sc_eagles,sc_holes):'—'}</td>
+          <td class="num ${sc_birdies>0?'stn-pos':''}">${sc_holes>0?pct(sc_birdies,sc_holes):'—'}</td>
+          <td class="num">${sc_holes>0?pct(sc_pars,sc_holes):'—'}</td>
+          <td class="num ${sc_bogeys>0?'stn-neg':''}">${sc_holes>0?pct(sc_bogeys,sc_holes):'—'}</td>
+          <td class="num ${sc_doubles_over>0?'stn-neg':''}">${sc_holes>0?pct(sc_doubles_over,sc_holes):'—'}</td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>` : '';
+
+
+  const titleRounds = rounds.filter(r => r.casinoTitlesMode && r.holeHistory && r.holeHistory.length > 0);
+  let titleHTML = '';
+
+  if(titleRounds.length > 0){
+    // Replay title state at end of each round using saved holeHistory
+    function replayTitlesForRound(r, targetName){
+      const pi = r.players.indexOf(targetName);
+      const n = r.players.length;
+      const netTotals = new Array(n).fill(0);
+      // build netTotals from holeHistory matchups
+      r.holeHistory.forEach(h => {
+        h.matchups.forEach(m => {
+          if(m.result === 'player'){ netTotals[m.playerIdx] += m.amount; netTotals[h.bankerIdx] -= m.amount; }
+          else if(m.result === 'banker'){ netTotals[h.bankerIdx] += m.amount; netTotals[m.playerIdx] -= m.amount; }
+        });
+      });
+
+      // matchup wins
+      const matchupWins = new Array(n).fill(0);
+      r.holeHistory.forEach(h => {
+        h.matchups.forEach(m => {
+          if(m.result === 'player') matchupWins[m.playerIdx]++;
+          else if(m.result === 'banker') matchupWins[h.bankerIdx]++;
+        });
+      });
+
+      // streaks
+      const streaks = new Array(n).fill(0);
+      for(let si = 0; si < n; si++){
+        let s = 0;
+        for(let hi = r.holeHistory.length - 1; hi >= 0; hi--){
+          const h = r.holeHistory[hi];
+          let profitable = false, tied = false;
+          if(h.bankerIdx === si){
+            profitable = h.matchups.some(m => m.result === 'banker');
+            tied = h.matchups.every(m => m.result === 'tie');
+          } else {
+            const m = h.matchups.find(m => m.playerIdx === si);
+            if(m && m.result === 'player') profitable = true;
+            if(m && m.result === 'tie') tied = true;
+          }
+          if(profitable) s++;
+          else if(tied) continue;
+          else break;
+        }
+        streaks[si] = s;
+      }
+
+      // big payday
+      const bigPayday = new Array(n).fill(0);
+      r.holeHistory.forEach(h => {
+        h.matchups.forEach(m => {
+          if(m.result === 'player') bigPayday[m.playerIdx] = Math.max(bigPayday[m.playerIdx], m.amount);
+          else if(m.result === 'banker') bigPayday[h.bankerIdx] = Math.max(bigPayday[h.bankerIdx], m.amount);
+        });
+      });
+
+      const lastHole = r.holeHistory[r.holeHistory.length - 1];
+      const finalBankerIdx = lastHole.nextBankerIdx !== undefined ? lastHole.nextBankerIdx : lastHole.bankerIdx;
+
+      // compute who holds each title
+      const sole = (arr, val) => { const leaders = arr.map((v,i)=>v===val?i:-1).filter(i=>i>=0); return leaders.length===1?leaders[0]:-1; };
+      const maxWins = Math.max(...matchupWins);
+      const maxNet  = Math.max(...netTotals);
+      const maxStreak = Math.max(...streaks);
+      const maxPay = Math.max(...bigPayday);
+
+      return {
+        kingpin:    maxWins > 0 && sole(matchupWins, maxWins) === pi,
+        highroller: maxNet  > 0 && sole(netTotals,   maxNet)  === pi,
+        thebanker:  finalBankerIdx === pi,
+        heater:     maxStreak >= 2 && sole(streaks, maxStreak) === pi,
+        shark:      maxPay  > 0 && sole(bigPayday,  maxPay)   === pi,
+        heldCount:  0, // filled below
+        // raw values for correlation
+        matchupWins: matchupWins[pi],
+        netTotal: netTotals[pi],
+        streak: streaks[pi],
+        bigPayday: bigPayday[pi],
+        // doubles for shark correlation
+        nb_doubles: 0, nb_doubleWins: 0  // filled below
+      };
+    }
+
+    // Gather per-round title data + doubles for shark analysis
+    let ti_ace=0, ti_whale=0, ti_banker=0, ti_heater=0, ti_shark=0;
+    let ti_multiTitle=0; // rounds with 3+ titles
+    // Ace vs Whale divergence: rounds where player has more wins than net suggests
+    let ace_not_whale=0, whale_not_ace=0, ace_and_whale=0;
+    // Heater role context
+    let heater_as_banker=0, heater_as_nonbanker=0, heater_both=0;
+    // Shark + double correlation
+    let shark_rounds=0, shark_doubleWins=0, shark_doubles_called=0;
+
+    titleRounds.forEach(r => {
+      const pi = r.players.indexOf(name);
+      const res = replayTitlesForRound(r, name);
+
+      // per-round doubles for shark holder
+      let rd_doubles=0, rd_doubleWins=0;
+      let rd_heaterAsBanker=false, rd_heaterAsNB=false;
+      r.holeHistory.forEach(h => {
+        if(h.bankerIdx === pi){
+          // heater streak context: check if any profitable hole as banker contributes to streak
+          if(res.heater) rd_heaterAsBanker = true;
+        } else {
+          const m = h.matchups.find(m => m.playerIdx === pi);
+          if(m){
+            if(m.doubled){ rd_doubles++; if(m.result==='player') rd_doubleWins++; }
+            if(res.heater) rd_heaterAsNB = true;
+          }
+        }
+      });
+
+      // better heater context: walk the streak backwards to see role mix
+      if(res.heater){
+        let bankerHoles=0, nbHoles=0;
+        for(let hi = r.holeHistory.length - 1; hi >= 0; hi--){
+          const h = r.holeHistory[hi];
+          let profitable=false, tied=false;
+          if(h.bankerIdx === pi){
+            profitable = h.matchups.some(m=>m.result==='banker');
+            tied = h.matchups.every(m=>m.result==='tie');
+          } else {
+            const m = h.matchups.find(m=>m.playerIdx===pi);
+            if(m && m.result==='player') profitable=true;
+            if(m && m.result==='tie') tied=true;
+          }
+          if(profitable){ if(h.bankerIdx===pi) bankerHoles++; else nbHoles++; }
+          else if(tied) continue;
+          else break;
+        }
+        if(bankerHoles > 0 && nbHoles > 0) heater_both++;
+        else if(bankerHoles > 0) heater_as_banker++;
+        else heater_as_nonbanker++;
+      }
+
+      const titleCount = [res.kingpin,res.highroller,res.thebanker,res.heater,res.shark].filter(Boolean).length;
+      res.heldCount = titleCount;
+
+      if(res.kingpin)    ti_ace++;
+      if(res.highroller) ti_whale++;
+      if(res.thebanker)  ti_banker++;
+      if(res.heater)     ti_heater++;
+      if(res.shark)      ti_shark++;
+      if(titleCount >= 3) ti_multiTitle++;
+
+      if(res.kingpin && res.highroller) ace_and_whale++;
+      else if(res.kingpin && !res.highroller) ace_not_whale++;
+      else if(!res.kingpin && res.highroller) whale_not_ace++;
+
+      if(res.shark){
+        shark_rounds++;
+        shark_doubles_called += rd_doubles;
+        shark_doubleWins     += rd_doubleWins;
+      }
+    });
+
+    const tr = titleRounds.length;
+    const ti_pct = (n) => tr>0 ? (n/tr*100).toFixed(0)+'%' : '—';
+
+    // Ace vs Whale divergence label
+    let divergeLabel='—', divergeClass='';
+    if(ace_and_whale > 0 || ace_not_whale > 0 || whale_not_ace > 0){
+      if(ace_not_whale > whale_not_ace && ace_not_whale > ace_and_whale){
+        divergeLabel='Volume Player'; divergeClass='stn-neg';
+      } else if(whale_not_ace > ace_not_whale && whale_not_ace > ace_and_whale){
+        divergeLabel='Efficient'; divergeClass='stn-pos';
+      } else {
+        divergeLabel='Balanced'; divergeClass='stn-pos';
+      }
+    }
+
+    // Heater role label
+    let heaterLabel='—', heaterClass='';
+    if(ti_heater > 0){
+      if(heater_both > heater_as_banker && heater_both > heater_as_nonbanker){
+        heaterLabel='All Roles'; heaterClass='stn-pos';
+      } else if(heater_as_banker >= heater_as_nonbanker){
+        heaterLabel='As Banker'; heaterClass='';
+      } else {
+        heaterLabel='As Non-Banker'; heaterClass='';
+      }
+    }
+
+    // Shark skill label
+    let sharkLabel='—', sharkClass='';
+    if(shark_rounds > 0 && shark_doubles_called > 0){
+      const sharkDWR = shark_doubleWins / shark_doubles_called;
+      if(sharkDWR >= 0.6){ sharkLabel='Skilled'; sharkClass='stn-pos'; }
+      else if(sharkDWR >= 0.4){ sharkLabel='Mixed'; sharkClass=''; }
+      else { sharkLabel='Risky'; sharkClass='stn-neg'; }
+    } else if(shark_rounds > 0){
+      sharkLabel='No Doubles'; sharkClass='';
+    }
+
+    titleHTML = `
+    <div class="stn-panel">
+      <div class="stn-panel-title">Title Intelligence</div>
+
+      <div class="stn-table-wrap">
+        <div class="stn-table-wrap-title">Title Hold Rate — ${tr} titled round${tr!==1?'s':''}</div>
+        <table class="stn-table">
+          <thead><tr><th>🔵 Ace</th><th>🟡 Whale</th><th>🟢 Banker</th><th>🟠 Heater</th><th>🟣 Shark</th></tr></thead>
+          <tbody><tr>
+            <td class="num ${ti_ace>0?'stn-pos':''}">${ti_pct(ti_ace)}</td>
+            <td class="num ${ti_whale>0?'stn-pos':''}">${ti_pct(ti_whale)}</td>
+            <td class="num">${ti_pct(ti_banker)}</td>
+            <td class="num ${ti_heater>0?'stn-pos':''}">${ti_pct(ti_heater)}</td>
+            <td class="num ${ti_shark>0?'stn-pos':''}">${ti_pct(ti_shark)}</td>
+          </tr></tbody>
+        </table>
+      </div>
+
+      <div class="stn-table-wrap">
+        <div class="stn-table-wrap-title">Ace vs Whale — Wins into Profit</div>
+        <table class="stn-table">
+          <thead><tr><th class="num">Ace Only</th><th class="num">Whale Only</th><th class="num">Both</th><th class="num">Style</th></tr></thead>
+          <tbody><tr>
+            <td class="num">${ace_not_whale}</td>
+            <td class="num">${whale_not_ace}</td>
+            <td class="num ${ace_and_whale>0?'stn-pos':''}">${ace_and_whale}</td>
+            <td class="num ${divergeClass}">${divergeLabel}</td>
+          </tr></tbody>
+        </table>
+      </div>
+
+      <div class="stn-table-wrap">
+        <div class="stn-table-wrap-title">Heater — Streak Role Context</div>
+        <table class="stn-table">
+          <thead><tr><th class="num">Heater Rounds</th><th class="num">As Banker</th><th class="num">As Non-Banker</th><th class="num">Mixed</th></tr></thead>
+          <tbody><tr>
+            <td class="num">${ti_heater}</td>
+            <td class="num">${heater_as_banker}</td>
+            <td class="num">${heater_as_nonbanker}</td>
+            <td class="num ${heater_both>0?'stn-pos':''}">${heater_both}</td>
+          </tr></tbody>
+        </table>
+      </div>
+
+      <div class="stn-table-wrap">
+        <div class="stn-table-wrap-title">Shark — Aggression Quality</div>
+        <table class="stn-table">
+          <thead><tr><th class="num">Shark Rounds</th><th class="num">Doubles Called</th><th class="num">Double Win Rate</th><th class="num">Read</th></tr></thead>
+          <tbody><tr>
+            <td class="num">${shark_rounds}</td>
+            <td class="num">${shark_doubles_called}</td>
+            <td class="num">${shark_doubles_called>0 ? pct(shark_doubleWins,shark_doubles_called) : '—'}</td>
+            <td class="num ${sharkClass}">${sharkLabel}</td>
+          </tr></tbody>
+        </table>
+      </div>
+
+      <div class="stn-table-wrap">
+        <div class="stn-table-wrap-title">Dominance — 3+ Titles Held Simultaneously</div>
+        <table class="stn-table">
+          <thead><tr><th class="num">Multi-Title Rounds</th><th class="num">Rate</th></tr></thead>
+          <tbody><tr>
+            <td class="num ${ti_multiTitle>0?'stn-pos':''}">${ti_multiTitle}</td>
+            <td class="num ${ti_multiTitle>0?'stn-pos':''}">${ti_pct(ti_multiTitle)}</td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
   out.innerHTML = `
   <div class="stn-panel">
+    <div class="stn-panel-title">Overview</div>
     <div class="stn-table-wrap">
-      <div class="stn-table-wrap-title">Overview</div>
       <table class="stn-table">
         <thead><tr><th>Rounds</th><th class="num">Net Balance</th><th class="num">Avg / Round</th></tr></thead>
         <tbody><tr>
@@ -1876,7 +2188,9 @@ function renderInsightsStats(){
         </tr></tbody>
       </table>
     </div>
-  </div>`;
+  </div>
+  ${titleHTML}
+  ${scoringHTML}`;
 }
 </script>
 </body>
